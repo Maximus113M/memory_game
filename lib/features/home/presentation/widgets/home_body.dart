@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/config/utils/constanst/screen_size.dart';
+import 'package:memory_game/config/shared/widgets/shared_widgets.dart';
 import 'package:memory_game/features/home/presentation/widgets/card_body.dart';
 import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
-import 'package:memory_game/config/shared/widgets/buttons/custom_filled_buttons.dart';
 
 //import 'package:flip_card/flip_card.dart';
 //import 'package:flip_card/flip_card_controller.dart';
@@ -71,7 +71,7 @@ class HomeBody extends StatelessWidget {
                       homeProvider.currentCard =
                           homeProvider.completedCardList[index];
 
-                      if (homeProvider.currentCard!.isSelected &&
+                      if (homeProvider.currentCard!.isSelected ||
                           homeProvider.currentCard!.isFound) {
                         return;
                       }
@@ -100,40 +100,20 @@ class HomeBody extends StatelessWidget {
                 },
               ),
             ),
-            /*const SizedBox(
+            const SizedBox(
               height: 10,
-            ),*/
-            CustomFilledButton(
-              onPress: () => homeProvider.showModalDialog(context),
-              text: 'Dialog',
             ),
-            FilledButton.icon(
-              onPressed: () {
+            CustomFilledButtonIcon(
+              onPress: () {
+                if (homeProvider.isMemorizing) return;
                 homeProvider.isTimerOn
                     ? homeProvider.stopGame()
                     : homeProvider.startGame();
               },
-              icon: Icon(
-                homeProvider.isTimerOn
-                    ? Icons.pause_circle_filled
-                    : Icons.not_started,
-                size: 30,
-              ),
-              label: Text(
-                homeProvider.isTimerOn ? 'Stop' : 'Start',
-                style: const TextStyle(fontSize: 20),
-              ),
-              style: ButtonStyle(
-                backgroundColor: const MaterialStatePropertyAll(Colors.black),
-                shape: MaterialStatePropertyAll(
-                  ContinuousRectangleBorder(
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                ),
-                padding: const MaterialStatePropertyAll(
-                  EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-                ),
-              ),
+              text: homeProvider.isTimerOn ? 'Stop' : 'Start',
+              icon: homeProvider.isTimerOn
+                  ? Icons.pause_circle_filled
+                  : Icons.not_started,
             ),
           ],
         );
