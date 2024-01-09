@@ -28,7 +28,7 @@ class HomeProvider with ChangeNotifier {
     completedCardList.shuffle();
   }
 
-  setColors() {
+  void setColors() {
     if (currentCard!.isFound) {
       cardBackColor = Colors.yellow.shade700;
       cardBackIconColor = Colors.white;
@@ -38,14 +38,14 @@ class HomeProvider with ChangeNotifier {
     cardBackIconColor = Colors.black;
   }
 
-  resetCardsValue() {
+  void resetCardsValue() {
     firstCard?.deselect();
     secondCard?.deselect();
     firstCard = null;
     secondCard = null;
   }
 
-  validateMatching(BuildContext context) async {
+  void validateMatching(BuildContext context) async {
     isValidating = true;
     if (firstCard!.value == secondCard!.value) {
       firstCard!.found();
@@ -62,20 +62,25 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  countTaps() {
+  void countTaps() {
     counter += 1;
     if (counter % 2 == 0) {
       attemptsCounter += 1;
     }
   }
 
-  stopGame() {
+  void quitGame() {
+    stopGame();
+    resetGame();
+  }
+
+  void stopGame() {
     timerSubscription?.cancel();
     isTimerOn = false;
     notifyListeners();
   }
 
-  resetGame() {
+  void resetGame() {
     completedCardList
         .where((card) => card.isFound || card.isSelected)
         .forEach((foundCard) {
@@ -90,14 +95,14 @@ class HomeProvider with ChangeNotifier {
     completeCardList();
   }
 
-  isWonGame(BuildContext context) {
+  void isWonGame(BuildContext context) {
     if (foundCardsCounter == completedCardList.length) {
       stopGame();
       showModalDialog(context);
     }
   }
 
-  showModalDialog(BuildContext context) {
+  void showModalDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (context) {
@@ -106,7 +111,7 @@ class HomeProvider with ChangeNotifier {
     );
   }
 
-  startGame() {
+  void startGame() {
     resetGame();
     isMemorizing = true;
     Stream.periodic(
@@ -122,10 +127,10 @@ class HomeProvider with ChangeNotifier {
     });
   }
 
-  startTimer() {
+  void startTimer() {
     if (isTimerOn) return;
     timerSubscription = Stream.periodic(const Duration(seconds: 1), (value) {
-      return value;
+      return value + 1;
     }).listen((value) {
       duration = Duration(seconds: value);
       notifyListeners();

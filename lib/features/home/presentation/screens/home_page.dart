@@ -7,6 +7,8 @@ import 'package:memory_game/features/home/presentation/providers/home_provider.d
 import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
+  static const name = '/home';
+
   const HomePage({super.key});
 
   @override

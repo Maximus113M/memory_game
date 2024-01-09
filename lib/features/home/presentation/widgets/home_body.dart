@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:memory_game/config/utils/constanst/screen_size.dart';
 import 'package:memory_game/config/shared/widgets/shared_widgets.dart';
@@ -25,11 +26,15 @@ class HomeBody extends StatelessWidget {
         return Column(
           children: [
             SizedBox(
-              height: ScreenSize.height * 0.07,
+              height: ScreenSize.height * 0.06,
             ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                IconButton(
+                  onPressed: () => context.pop(),
+                  icon: const Icon(Icons.arrow_back),
+                ),
+                const Spacer(),
                 const Icon(Icons.watch_later),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
@@ -41,7 +46,7 @@ class HomeBody extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.only(top: 5, bottom: 25),
+              padding: const EdgeInsets.only(top: 0, bottom: 25),
               child: Text(
                 'Attempts: ${homeProvider.attemptsCounter}',
                 style: const TextStyle(fontSize: 20),
@@ -103,17 +108,34 @@ class HomeBody extends StatelessWidget {
             const SizedBox(
               height: 10,
             ),
-            CustomFilledButtonIcon(
-              onPress: () {
-                if (homeProvider.isMemorizing) return;
-                homeProvider.isTimerOn
-                    ? homeProvider.stopGame()
-                    : homeProvider.startGame();
-              },
-              text: homeProvider.isTimerOn ? 'Stop' : 'Start',
-              icon: homeProvider.isTimerOn
-                  ? Icons.pause_circle_filled
-                  : Icons.not_started,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomFilledButtonIcon(
+                  onPress: () {
+                    if (homeProvider.isMemorizing) return;
+                    homeProvider.isTimerOn
+                        ? homeProvider.quitGame()
+                        : homeProvider.startGame();
+                  },
+                  text: homeProvider.isTimerOn ? 'Quit' : 'Start',
+                  icon: homeProvider.isTimerOn
+                      ? Icons.stop_circle_outlined
+                      : Icons.not_started,
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                CustomFilledButtonIcon(
+                  onPress: () {
+                    if (homeProvider.isMemorizing) return;
+                    homeProvider.quitGame();
+                    homeProvider.startGame();
+                  },
+                  text: 'Retry',
+                  icon: Icons.restart_alt_outlined,
+                ),
+              ],
             ),
           ],
         );
