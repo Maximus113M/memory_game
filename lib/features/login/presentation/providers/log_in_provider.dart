@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:memory_game/config/utils/constanst/app_constans.dart';
+
+import 'package:memory_game/core/utils/constanst/app_constans.dart';
+import 'package:memory_game/features/login/domain/use_cases/create_with_email_and_password_use_case.dart';
+import 'package:memory_game/features/login/domain/use_cases/login_with_email_and_password_use_case.dart';
 
 class LogInProvider with ChangeNotifier {
+  final LoginWithEmailAndPasswordUseCase loginWithEmailAndPasswordUseCase;
+  final CreateWithEmailAndPasswordUseCase createWithEmailAndPasswordUseCase;
   bool isHiden = true;
   bool _isEmailNotValid = false;
   bool _isPasswordNotValid = false;
   String _email = '';
   String _password = '';
 
-  LogInProvider();
+  LogInProvider({
+    required this.loginWithEmailAndPasswordUseCase,
+    required this.createWithEmailAndPasswordUseCase,
+  });
 
   bool get isEmailNotValid => _isEmailNotValid;
   bool get isPasswordNotValid => _isPasswordNotValid;

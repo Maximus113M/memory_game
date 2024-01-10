@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:memory_game/config/utils/utils.dart';
+import 'package:memory_game/core/utils/utils.dart';
 
 class LogInWithIconContainer extends StatelessWidget {
   final String imagePath;

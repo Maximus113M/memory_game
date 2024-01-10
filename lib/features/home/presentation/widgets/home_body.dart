@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
-import 'package:memory_game/config/utils/constanst/screen_size.dart';
-import 'package:memory_game/config/shared/widgets/shared_widgets.dart';
+import 'package:memory_game/core/utils/constanst/screen_size.dart';
+import 'package:memory_game/core/shared/widgets/shared_widgets.dart';
 import 'package:memory_game/features/home/presentation/widgets/card_body.dart';
 import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
+
+import 'package:go_router/go_router.dart';
 
 //import 'package:flip_card/flip_card.dart';
 //import 'package:flip_card/flip_card_controller.dart';

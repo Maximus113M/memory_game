@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-import 'package:memory_game/config/utils/utils.dart';
-import 'package:memory_game/config/shared/widgets/shared_widgets.dart';
-import 'package:memory_game/features/login/presentation/providers/log_in_provider.dart';
+import 'package:memory_game/core/utils/utils.dart';
+import 'package:memory_game/core/shared/widgets/shared_widgets.dart';
 import 'package:memory_game/features/login/presentation/widgets/custom_text_form.dart';
+import 'package:memory_game/features/login/presentation/providers/log_in_provider.dart';
 import 'package:memory_game/features/login/presentation/widgets/log_in_with_icon_container.dart';
 
-import 'package:go_router/go_router.dart';
+//import 'package:go_router/go_router.dart';
 
 class LogInBody extends StatelessWidget {
   final LogInProvider logInProvider;
@@ -30,7 +30,7 @@ class LogInBody extends StatelessWidget {
               ),
               Text(
                 'Login',
-                style: FontStyles.heading3(AppColors.text),
+                style: FontStyles.heading2(AppColors.text),
               ),
               const SizedBox(
                 height: 3,

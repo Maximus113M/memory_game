@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:memory_game/config/utils/utils.dart';
+import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/features/splash/presentation/providers/splash_provider.dart';
 
 import 'package:animate_do/animate_do.dart';

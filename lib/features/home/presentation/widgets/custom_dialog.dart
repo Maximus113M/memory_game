@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:memory_game/config/utils/utils.dart';
-import 'package:memory_game/config/shared/widgets/buttons/custom_filled_buttons.dart';
+import 'package:memory_game/core/utils/utils.dart';
+import 'package:memory_game/core/shared/widgets/buttons/custom_filled_buttons.dart';
 
 class CustomDialog extends StatelessWidget {
   final int attempts;
