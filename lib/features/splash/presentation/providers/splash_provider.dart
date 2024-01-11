@@ -5,7 +5,7 @@ class SplashProvider with ChangeNotifier {
   SplashProvider();
 
   void goToLogIn(BuildContext context) async {
-    await Future.delayed(const Duration(milliseconds: 4000));
-    GoRouter.of(context).go('/login');
+    await Future.delayed(const Duration(milliseconds: 4000))
+        .then((value) => GoRouter.of(context).go('/login'));
   }
 }

@@ -13,7 +13,7 @@ class LoginRepositoryImpl implements LoginRepository {
   LoginRepositoryImpl({required this.loginDataSource});
 
   @override
-  Future<Either<Failure, UserCredential?>> loginWithEmailAndPassword(
+  Future<Either<LoginFailure, UserCredential?>> loginWithEmailAndPassword(
       EmailAndPasswordData emailAndPassword) async {
     try {
       return Right(
@@ -27,7 +27,7 @@ class LoginRepositoryImpl implements LoginRepository {
   }
 
   @override
-  Future<Either<Failure, UserCredential?>> createWithEmailAndPassword(
+  Future<Either<LoginFailure, UserCredential?>> createWithEmailAndPassword(
       EmailAndPasswordData emailAndPassword) async {
     try {
       return Right(

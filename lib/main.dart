@@ -4,6 +4,7 @@ import 'package:memory_game/injection_container.dart';
 import 'package:memory_game/core/routes/app_router.dart';
 import 'package:memory_game/core/services/auth_service.dart';
 import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
+import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
 import 'package:memory_game/features/login/presentation/providers/log_in_provider.dart';
 import 'package:memory_game/features/splash/presentation/providers/splash_provider.dart';
 
@@ -11,7 +12,6 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  //await AuthService.firebaseInit();
   await init();
 
   AuthService.firebaseInit().then((value) {
@@ -20,6 +20,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => sl<SplashProvider>()),
         ChangeNotifierProvider(create: (context) => sl<LogInProvider>()),
         ChangeNotifierProvider(create: (context) => sl<HomeProvider>()),
+        ChangeNotifierProvider(create: (context) => sl<GameProvider>()),
       ], child: const MyApp()),
     );
   });

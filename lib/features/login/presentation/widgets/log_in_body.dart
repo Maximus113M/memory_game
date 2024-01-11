@@ -6,11 +6,13 @@ import 'package:memory_game/features/login/presentation/widgets/custom_text_form
 import 'package:memory_game/features/login/presentation/providers/log_in_provider.dart';
 import 'package:memory_game/features/login/presentation/widgets/log_in_with_icon_container.dart';
 
-//import 'package:go_router/go_router.dart';
-
 class LogInBody extends StatelessWidget {
   final LogInProvider logInProvider;
-  const LogInBody({super.key, required this.logInProvider});
+
+  const LogInBody({
+    super.key,
+    required this.logInProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -54,9 +56,10 @@ class LogInBody extends StatelessWidget {
                 icon: Icons.lock_outline,
                 text: 'Password',
                 showPassword: true,
-                isHiden: logInProvider.isHiden,
+                isHiden: logInProvider.isHidenPassword,
                 error: logInProvider.isPasswordNotValid,
-                toggleVisibility: () => logInProvider.toggleVisibility(),
+                toggleVisibility: () =>
+                    logInProvider.togglePasswordVisibility(),
                 onChange: (value) => logInProvider.setPassword(value),
               ),
               const SizedBox(
@@ -78,8 +81,7 @@ class LogInBody extends StatelessWidget {
                 horizontalPadding: ScreenSize.width * 0.32,
                 verticalPadding: 15,
                 onPress: () {
-                  logInProvider.validateUser();
-                  //GoRouter.of(context).push('/home');
+                  logInProvider.validateLogin(context);
                 },
               ),
               const SizedBox(
@@ -131,9 +133,7 @@ class LogInBody extends StatelessWidget {
                       ' Sign Up',
                       style: FontStyles.bodyBold1(AppColors.text),
                     ),
-                    onTap: () {
-                      print('Mamahuevo');
-                    },
+                    onTap: () => logInProvider.goToSignIn(context),
                   ),
                 ],
               ),

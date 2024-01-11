@@ -5,9 +5,9 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 abstract class LoginRepository {
-  Future<Either<Failure, UserCredential?>> loginWithEmailAndPassword(
+  Future<Either<LoginFailure, UserCredential?>> loginWithEmailAndPassword(
       EmailAndPasswordData emailAndPassword);
 
-  Future<Either<Failure, UserCredential?>> createWithEmailAndPassword(
+  Future<Either<LoginFailure, UserCredential?>> createWithEmailAndPassword(
       EmailAndPasswordData emailAndPassword);
 }

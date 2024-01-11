@@ -13,7 +13,8 @@ class LoginWithEmailAndPasswordUseCase
   LoginWithEmailAndPasswordUseCase({required this.loginRepository});
 
   @override
-  Future<Either<Failure, UserCredential?>> call(EmailAndPasswordData params) {
+  Future<Either<LoginFailure, UserCredential?>> call(
+      EmailAndPasswordData params) {
     return loginRepository.loginWithEmailAndPassword(params);
   }
 }

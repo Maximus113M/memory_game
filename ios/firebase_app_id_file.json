@@ -1,7 +1,7 @@
 {
   "file_generated_by": "FlutterFire CLI",
   "purpose": "FirebaseAppID & ProjectID for this Firebase app in this directory",
-  "GOOGLE_APP_ID": "1:600525047863:ios:2ddd5389e4c84be0fb17b2",
-  "FIREBASE_PROJECT_ID": "memory-game-2024",
-  "GCM_SENDER_ID": "600525047863"
+  "GOOGLE_APP_ID": "1:319085335232:ios:6c8f157bc6d7e3fdc1d325",
+  "FIREBASE_PROJECT_ID": "memory-game-d1c5d",
+  "GCM_SENDER_ID": "319085335232"
 }

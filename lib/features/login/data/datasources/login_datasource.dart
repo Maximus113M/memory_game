@@ -26,13 +26,13 @@ class LoginDataSourceImpl extends LoginDataSource {
               password: emailAndPasswordData.password);
       return userCredential;
     } on FirebaseAuthException catch (e) {
-      String message = 'Error al Iniciar Sesion';
+      String message = 'Login error, please, check your credentials';
 
       if (e.code == 'user-not-found') {
-        message = 'Usuario no encontrado';
+        message = 'User not found';
       }
       if (e.code == 'wrong-password') {
-        message = 'Contraseña incorrecta';
+        message = 'Wrong password';
       }
       throw LoginException(
         message: message,
