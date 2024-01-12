@@ -22,6 +22,8 @@ void registerProviders() {
     () => GameProvider(),
   );
   sl.registerLazySingleton(
-    () => GlobalScoresProvider(),
+    () => GlobalScoresProvider(
+      getGlobalScoresStreamUseCase: sl(),
+    ),
   );
 }

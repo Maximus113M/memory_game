@@ -24,7 +24,7 @@ class AuthService {
         print('User is signed in!');
       }
     });
-    //firebaseAuth.s
+    firebaseAuth.currentUser; //TODO: PENDIENTE CURRENT-USER
   }
 
   signOut() {

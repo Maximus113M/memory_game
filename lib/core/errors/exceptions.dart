@@ -27,3 +27,15 @@ class HomeException implements Exception {
 
   HomeException({required this.message});
 }
+
+class LocalScoresException implements Exception {
+  final String message;
+
+  LocalScoresException({required this.message});
+}
+
+class GlobalScoresException implements Exception {
+  final String message;
+
+  GlobalScoresException({required this.message});
+}

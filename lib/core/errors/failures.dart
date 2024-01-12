@@ -29,3 +29,15 @@ class HomeFailure extends Failure {
 
   HomeFailure({required this.message});
 }
+
+class LocalScoresFailure extends Failure {
+  final String message;
+
+  LocalScoresFailure({required this.message});
+}
+
+class GlobalScoresFailure extends Failure {
+  final String message;
+
+  GlobalScoresFailure({required this.message});
+}

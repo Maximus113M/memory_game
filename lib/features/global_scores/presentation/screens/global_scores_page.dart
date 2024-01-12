@@ -14,34 +14,30 @@ class GlobalScoresPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.select((GlobalScoresProvider globalScoreProvider) =>
+        globalScoreProvider.getGlobalScores(context));
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: AppColors.text,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              bottomLeft: Radius.circular(15),
-              bottomRight: Radius.circular(15),
-            ),
-          ),
-          title: Row(
-            children: [
-              IconButton(
-                  onPressed: () => GoRouter.of(context).pop(),
-                  icon: Icon(
-                    Icons.arrow_back,
-                    color: AppColors.contrast,
-                  )),
-              const SizedBox(
-                width: 10,
-              ),
-              Text(
-                'Memory Game',
-                style: FontStyles.subtitle2(AppColors.contrast),
-              ),
-            ],
+      appBar: AppBar(
+        backgroundColor: AppColors.text,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            bottomLeft: Radius.circular(15),
+            bottomRight: Radius.circular(15),
           ),
         ),
-        body: GlobalScoresPageBody(
-            globalScoresProvider: Provider.of<GlobalScoresProvider>(context)));
+        leading: IconButton(
+          onPressed: () => GoRouter.of(context).pop(),
+          icon: Icon(
+            Icons.arrow_back,
+            color: AppColors.contrast,
+          ),
+        ),
+        title: Text(
+          'Global Scores',
+          style: FontStyles.subtitle2(AppColors.contrast),
+        ),
+      ),
+      body: const GlobalScoresPageBody(),
+    );
   }
 }
