@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memory_game/features/global_scores/presentation/providers/global_scores_provider.dart';
 
 import 'package:memory_game/injection_container.dart';
 import 'package:memory_game/core/routes/app_router.dart';
@@ -21,6 +22,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => sl<LogInProvider>()),
         ChangeNotifierProvider(create: (context) => sl<HomeProvider>()),
         ChangeNotifierProvider(create: (context) => sl<GameProvider>()),
+        ChangeNotifierProvider(create: (context) => sl<GlobalScoresProvider>()),
       ], child: const MyApp()),
     );
   });

@@ -5,12 +5,13 @@ import 'package:memory_game/features/game/presentation/widgets/game_page_body.da
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
 
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
+import 'package:animate_do/animate_do.dart';
 
 class GamePage extends StatelessWidget {
   static const name = '/game';
+  final GameProvider gameProvider;
 
-  const GamePage({super.key});
+  const GamePage({super.key, required this.gameProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +25,7 @@ class GamePage extends StatelessWidget {
           ),
         ),
         leading: IconButton(
-          onPressed: () => GoRouter.of(context).pop(),
+          onPressed: () => gameProvider.goToHome(context),
           icon: Icon(
             Icons.arrow_back,
             color: AppColors.contrast,
@@ -35,18 +36,30 @@ class GamePage extends StatelessWidget {
           style: FontStyles.subtitle2(AppColors.contrast),
         ),
         actions: [
-          Icon(
-            Icons.watch_later,
-            color: AppColors.contrast,
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8, right: 16),
-            child: Text(
-              context.select(
-                  (GameProvider gameProvider) => gameProvider.getTimeString()),
-              style: FontStyles.body1(AppColors.contrast),
+          Flash(
+            animate: gameProvider.isMemorizing || gameProvider.isGameEnd,
+            infinite: true,
+            duration: const Duration(milliseconds: 2000),
+            child: Row(
+              children: [
+                Roulette(
+                  animate: gameProvider.isTimerOn,
+                  duration: const Duration(milliseconds: 4000),
+                  child: Icon(
+                    Icons.hourglass_bottom,
+                    color: AppColors.contrast,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, right: 16),
+                  child: Text(
+                    gameProvider.getTimeString(),
+                    style: FontStyles.body1(AppColors.contrast),
+                  ),
+                ),
+              ],
             ),
-          ),
+          )
         ],
       ),
       body: GamePageBody(

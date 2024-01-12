@@ -25,3 +25,5 @@ class HomeProvider with ChangeNotifier {
 
   HomeProvider();
 }
+
+enum GameDifficulty { easy, medium, hard }

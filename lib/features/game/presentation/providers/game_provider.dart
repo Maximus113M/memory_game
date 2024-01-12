@@ -2,13 +2,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/features/game/domain/entities/card_entity.dart';
-import 'package:memory_game/features/game/presentation/widgets/custom_dialog.dart';
+import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
+import 'package:memory_game/features/game/domain/entities/game_statistics_model.dart';
+import 'package:memory_game/features/game/presentation/widgets/custom_game_dialog.dart';
+
+import 'package:go_router/go_router.dart';
 
 class GameProvider with ChangeNotifier {
+  GameDifficulty? difficulty = GameDifficulty.easy;
   bool isMemorizing = false;
   int countdownLimit = 6;
   Duration duration = const Duration(seconds: 0);
   StreamSubscription<int>? timerSubscription;
+  StreamSubscription<int>? countDownSubscription;
   bool isTimerOn = false;
   CardEntity? firstCard;
   CardEntity? secondCard;
@@ -18,6 +24,7 @@ class GameProvider with ChangeNotifier {
   int attemptsCounter = 0;
   List<CardEntity> completedCardList = [];
   bool isValidating = false;
+  bool isGameEnd = false;
   Color? cardBackColor;
   Color? cardBackIconColor;
 
@@ -45,6 +52,27 @@ class GameProvider with ChangeNotifier {
     secondCard = null;
   }
 
+  void flipCard(BuildContext context, int index) {
+    if (isValidating || !isTimerOn) {
+      return;
+    }
+    currentCard = completedCardList[index];
+
+    if (currentCard!.isSelected || currentCard!.isFound) {
+      return;
+    }
+    if (firstCard != null) {
+      secondCard = currentCard;
+      currentCard!.select();
+      validateMatching(context);
+    } else {
+      firstCard = currentCard;
+      currentCard!.select();
+    }
+    countTaps();
+    notifyListeners();
+  }
+
   void validateMatching(BuildContext context) async {
     isValidating = true;
     if (firstCard!.value == secondCard!.value) {
@@ -70,17 +98,18 @@ class GameProvider with ChangeNotifier {
   }
 
   void quitGame() {
-    stopGame();
-    resetGame();
+    gameEnd();
+    resetGameValues();
   }
 
-  void stopGame() {
+  void gameEnd() {
     timerSubscription?.cancel();
     isTimerOn = false;
+    isGameEnd = true;
     notifyListeners();
   }
 
-  void resetGame() {
+  void resetGameValues() {
     completedCardList
         .where((card) => card.isFound || card.isSelected)
         .forEach((foundCard) {
@@ -88,33 +117,54 @@ class GameProvider with ChangeNotifier {
       foundCard.deselect();
     });
     resetCardsValue();
+    if (isMemorizing) {
+      countDownSubscription!.cancel();
+      isMemorizing = false;
+    }
     counter = 0;
     attemptsCounter = 0;
     foundCardsCounter = 0;
+    duration = const Duration(seconds: 0);
+    isGameEnd = false;
     completedCardList.clear();
     completeCardList();
   }
 
   void isWonGame(BuildContext context) {
     if (foundCardsCounter == completedCardList.length) {
-      stopGame();
-      showModalDialog(context);
+      gameEnd();
+      final timeBonusScore = timeBonus();
+      final attemptsBonusScore = attemptsBonus();
+
+      final gameStatisticsModel = GameStatisticsModel(
+        attempts: attemptsCounter + 1,
+        score: gameScore(
+          attemptsBonus: attemptsBonusScore,
+          timeBonus: timeBonusScore,
+        ),
+        time: getTimeString(),
+        timeInSeconds: duration.inSeconds,
+        timeBonus: timeBonusScore,
+        attemptsBonus: attemptsBonusScore,
+      );
+      showModalDialog(context, gameStatisticsModel);
     }
   }
 
-  void showModalDialog(BuildContext context) {
+  void showModalDialog(
+      BuildContext context, GameStatisticsModel gameStatisticsModel) {
     showDialog(
       context: context,
       builder: (context) {
-        return CustomDialog(attempts: attemptsCounter);
+        return CustomGameDialog(gameStatisticsModel: gameStatisticsModel);
       },
     );
   }
 
   void startGame() {
-    resetGame();
+    resetGameValues();
     isMemorizing = true;
-    Stream.periodic(
+    countDownSubscription = Stream.periodic(
             const Duration(seconds: 1), (second) => countdownLimit - second - 1)
         .take(6)
         .listen((timeLeft) {
@@ -145,5 +195,106 @@ class GameProvider with ChangeNotifier {
         (duration.inSeconds % 60).floor().toString().padLeft(2, '0');
 
     return '$minutes:$seconds';
+  }
+
+  void goToHome(BuildContext context) {
+    quitGame();
+    GoRouter.of(context).pop();
+  }
+
+  int gameScore({required int timeBonus, required int attemptsBonus}) {
+    int baseScore = 0;
+    switch (difficulty) {
+      case GameDifficulty.easy:
+        baseScore =
+            (3600 + (8 / attemptsCounter * 100 - duration.inSeconds * 8))
+                .floor();
+        break;
+      case GameDifficulty.medium:
+        baseScore =
+            (3600 + (10 / attemptsCounter * 100 - duration.inSeconds * 12))
+                .floor();
+        break;
+      case GameDifficulty.hard:
+        baseScore =
+            (3600 + (10 / attemptsCounter * 100 - duration.inSeconds * 14))
+                .floor();
+        break;
+      default:
+        baseScore = 0;
+        break;
+    }
+    return baseScore + timeBonus + attemptsBonus;
+  }
+
+  int timeBonus() {
+    int timeBonus = 0;
+    switch (difficulty) {
+      case GameDifficulty.easy:
+        if (duration.inSeconds <= 15) {
+          timeBonus += 16;
+          if (duration.inSeconds <= 8) {
+            timeBonus += 16;
+          }
+        }
+        break;
+      case GameDifficulty.medium:
+        if (duration.inSeconds <= 15) {
+          timeBonus += 30;
+          if (duration.inSeconds <= 10) {
+            timeBonus += 30;
+          }
+        }
+        break;
+      case GameDifficulty.hard:
+        if (duration.inSeconds <= 15) {
+          timeBonus += 35;
+          if (duration.inSeconds <= 10) {
+            timeBonus += 35;
+          }
+        }
+        break;
+      default:
+        timeBonus = 0;
+        break;
+    }
+    return timeBonus;
+  }
+
+  int attemptsBonus() {
+    int attemptsBonus = 0;
+    switch (difficulty) {
+      case GameDifficulty.easy:
+        if (attemptsCounter <= 12) {
+          attemptsBonus += 8;
+          if (attemptsCounter <= 10) {
+            attemptsBonus += 8;
+            if (attemptsCounter <= 8) {
+              attemptsBonus += 8;
+            }
+          }
+        }
+        break;
+      case GameDifficulty.medium:
+        if (attemptsCounter <= 12) {
+          attemptsBonus += 30;
+          if (attemptsCounter <= 10) {
+            attemptsBonus += 30;
+          }
+        }
+        break;
+      case GameDifficulty.hard:
+        if (attemptsCounter <= 12) {
+          attemptsBonus += 35;
+          if (attemptsCounter <= 10) {
+            attemptsBonus += 35;
+          }
+        }
+        break;
+      default:
+        attemptsBonus = 0;
+        break;
+    }
+    return attemptsBonus;
   }
 }
