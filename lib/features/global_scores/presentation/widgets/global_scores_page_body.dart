@@ -8,10 +8,11 @@ import 'package:memory_game/features/global_scores/presentation/providers/global
 class GlobalScoresPageBody extends StatelessWidget {
   final GlobalScoresProvider globalScoresProvider;
   final List<ScoreMenuModel> scoreMenuList;
-  const GlobalScoresPageBody(
-      {super.key,
-      required this.scoreMenuList,
-      required this.globalScoresProvider});
+  const GlobalScoresPageBody({
+    super.key,
+    required this.scoreMenuList,
+    required this.globalScoresProvider,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +32,7 @@ class GlobalScoresPageBody extends StatelessWidget {
             itemCount: scoreMenuList.length,
             itemBuilder: (context, index) {
               return GestureDetector(
-                onTap: () => globalScoresProvider.goToScoresView(
+                onTap: () => globalScoresProvider.goToScoresListView(
                     context, scoreMenuList[index].difficultyValue),
                 child: MenuCard(
                   difficultyValue: scoreMenuList[index].difficultyValue,

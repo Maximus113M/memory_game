@@ -17,6 +17,8 @@ class HomePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.text,
+        elevation: 10,
+        shadowColor: AppColors.text,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(15),
@@ -42,7 +44,7 @@ class HomePage extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {},
-              icon: Icon(
+              icon: const Icon(
                 Icons.settings,
                 color: AppColors.contrast,
                 size: 30,
@@ -51,7 +53,7 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 homeProvider.signOut(context);
               },
-              icon: Icon(
+              icon: const Icon(
                 Icons.logout,
                 color: AppColors.contrast,
                 size: 28,

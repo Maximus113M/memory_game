@@ -18,6 +18,8 @@ class GamePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.text,
+        elevation: 10,
+        shadowColor: AppColors.text,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
             bottomLeft: Radius.circular(15),
@@ -26,7 +28,7 @@ class GamePage extends StatelessWidget {
         ),
         leading: IconButton(
           onPressed: () => gameProvider.goToHome(context),
-          icon: Icon(
+          icon: const Icon(
             Icons.arrow_back,
             color: AppColors.contrast,
           ),
@@ -45,7 +47,7 @@ class GamePage extends StatelessWidget {
                 Roulette(
                   animate: gameProvider.isTimerOn,
                   duration: const Duration(milliseconds: 4000),
-                  child: Icon(
+                  child: const Icon(
                     Icons.hourglass_bottom,
                     color: AppColors.contrast,
                   ),
