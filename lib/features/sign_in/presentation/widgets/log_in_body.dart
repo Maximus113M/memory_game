@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/shared/widgets/shared_widgets.dart';
-import 'package:memory_game/features/login/presentation/widgets/custom_text_form.dart';
-import 'package:memory_game/features/login/presentation/providers/log_in_provider.dart';
-import 'package:memory_game/features/login/presentation/widgets/log_in_with_icon_container.dart';
+import 'package:memory_game/features/sign_in/presentation/widgets/custom_text_form.dart';
+import 'package:memory_game/features/sign_in/presentation/providers/sign_in_provider.dart';
+import 'package:memory_game/features/sign_in/presentation/widgets/log_in_with_icon_container.dart';
 
 class LogInBody extends StatelessWidget {
-  final LogInProvider logInProvider;
+  final SignInProvider logInProvider;
 
   const LogInBody({
     super.key,
@@ -24,11 +24,11 @@ class LogInBody extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                height: ScreenSize.height * 0.14,
+                height: ScreenSize.height * 0.13,
               ),
               Image.asset(AppAssets.brain2, height: 150),
               const SizedBox(
-                height: 20,
+                height: 15,
               ),
               Text(
                 'Login',
@@ -39,8 +39,8 @@ class LogInBody extends StatelessWidget {
               ),
               Text('Sign in to continue!',
                   style: FontStyles.subtitle2(AppColors.text)),
-              const SizedBox(
-                height: 30,
+              SizedBox(
+                height: ScreenSize.height * 0.03,
               ),
               CustomTextForm(
                 icon: Icons.mail_outlined,
@@ -72,8 +72,8 @@ class LogInBody extends StatelessWidget {
                 ),
                 onTap: () {},
               ),
-              const SizedBox(
-                height: 30,
+              SizedBox(
+                height: ScreenSize.height * 0.055,
               ),
               CustomFilledButton(
                 text: 'LOGIN',

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/shared/widgets/shared_widgets.dart';
-import 'package:memory_game/features/login/presentation/widgets/custom_text_form.dart';
-import 'package:memory_game/features/login/presentation/providers/log_in_provider.dart';
+import 'package:memory_game/features/sign_in/presentation/widgets/custom_text_form.dart';
+import 'package:memory_game/features/sign_in/presentation/providers/sign_in_provider.dart';
 
 class SignUpBody extends StatelessWidget {
-  final LogInProvider logInProvider;
+  final SignInProvider logInProvider;
 
   const SignUpBody({
     super.key,
@@ -24,11 +24,11 @@ class SignUpBody extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 SizedBox(
-                  height: ScreenSize.height * 0.14,
+                  height: ScreenSize.height * 0.13,
                 ),
                 Image.asset(AppAssets.brain2, height: 150),
                 const SizedBox(
-                  height: 20,
+                  height: 15,
                 ),
                 Text(
                   'Sign up',
@@ -39,8 +39,18 @@ class SignUpBody extends StatelessWidget {
                 ),
                 Text('Sign up to get started!',
                     style: FontStyles.subtitle2(AppColors.text)),
+                SizedBox(
+                  height: ScreenSize.height * 0.02,
+                ),
+                CustomTextForm(
+                  icon: Icons.person_outlined,
+                  text: 'Name',
+                  showPassword: false,
+                  error: logInProvider.isNameNotValid,
+                  onChange: (value) => logInProvider.setName(value),
+                ),
                 const SizedBox(
-                  height: 30,
+                  height: 22,
                 ),
                 CustomTextForm(
                   icon: Icons.mail_outlined,
@@ -88,7 +98,7 @@ class SignUpBody extends StatelessWidget {
                   },
                 ),
                 SizedBox(
-                  height: ScreenSize.height * 0.1,
+                  height: ScreenSize.height * 0.04,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

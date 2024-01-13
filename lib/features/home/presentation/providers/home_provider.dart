@@ -1,29 +1,21 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:memory_game/core/shared/models/menu_model.dart';
+import 'package:go_router/go_router.dart';
+import 'package:memory_game/core/shared/models/main_menu_model.dart';
 
 class HomeProvider with ChangeNotifier {
-  List<MenuModel> menuList = [
-    MenuModel(
-      title: 'Play',
-      subtitle: 'Play and test your skills!',
-      icon: Icons.sports_esports,
-      path: '/game',
-    ),
-    MenuModel(
-      title: 'High scores',
-      subtitle: 'Check your high scores!',
-      icon: Icons.phone_android,
-      path: '/local-scores',
-    ),
-    MenuModel(
-      title: 'Higher overall scores',
-      subtitle: 'Check the world\'s 10 highest scores!',
-      icon: Icons.public,
-      path: '/global-scores',
-    ),
-  ];
+  final FirebaseAuth firebaseAuth;
+  List<MainMenuModel> menuList = MainMenuModel.mainMenuList();
+  bool isInSession = true;
 
-  HomeProvider();
+  HomeProvider({required this.firebaseAuth});
+
+  signOut(BuildContext context) {
+    firebaseAuth
+        .signOut()
+        .then((value) => GoRouter.of(context).pushReplacement('/login'));
+    isInSession = true;
+  }
 }
 
 enum GameDifficulty { easy, medium, hard }

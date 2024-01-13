@@ -2,30 +2,33 @@ import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/constanst/app_constans.dart';
 import 'package:memory_game/core/utils/constanst/in_app_notification.dart';
-import 'package:memory_game/features/login/data/models/email_and_password_data.dart';
-import 'package:memory_game/features/login/domain/use_cases/create_with_email_and_password_use_case.dart';
-import 'package:memory_game/features/login/domain/use_cases/login_with_email_and_password_use_case.dart';
+import 'package:memory_game/features/sign_in/data/models/sign_in_user_data.dart';
+import 'package:memory_game/features/sign_in/domain/use_cases/login_with_email_and_password_use_case.dart';
+import 'package:memory_game/features/sign_in/domain/use_cases/create_with_email_and_password_use_case.dart';
 
 import 'package:go_router/go_router.dart';
 
-class LogInProvider with ChangeNotifier {
+class SignInProvider with ChangeNotifier {
   final LoginWithEmailAndPasswordUseCase loginWithEmailAndPasswordUseCase;
   final CreateWithEmailAndPasswordUseCase createWithEmailAndPasswordUseCase;
   bool isHidenPassword = true;
   bool isHidenConfirmPassword = true;
+  bool _isNameNotValid = false;
   bool _isEmailNotValid = false;
   bool _isPasswordNotValid = false;
   bool _isConfirmPasswordNotValid = false;
   bool _isLoadingEmailVerification = false;
+  String _name = '';
   String _email = '';
   String _password = '';
   String _confirmPassword = '';
 
-  LogInProvider({
+  SignInProvider({
     required this.loginWithEmailAndPasswordUseCase,
     required this.createWithEmailAndPasswordUseCase,
   });
 
+  bool get isNameNotValid => _isNameNotValid;
   bool get isEmailNotValid => _isEmailNotValid;
   bool get isPasswordNotValid => _isPasswordNotValid;
   bool get isConfirmPasswordNotValid => _isConfirmPasswordNotValid;
@@ -40,6 +43,10 @@ class LogInProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setName(String name) {
+    _name = name;
+  }
+
   void setEmail(String email) {
     _email = email;
   }
@@ -50,6 +57,14 @@ class LogInProvider with ChangeNotifier {
 
   void setConfirmPassword(String confirmPassword) {
     _confirmPassword = confirmPassword;
+  }
+
+  void validateName() {
+    if (_name.isEmpty) {
+      _isNameNotValid = true;
+      return;
+    }
+    _isNameNotValid = false;
   }
 
   void validateEmail() {
@@ -78,6 +93,7 @@ class LogInProvider with ChangeNotifier {
   }
 
   void resetValues() {
+    _name = '';
     _email = '';
     _password = '';
     _confirmPassword = '';
@@ -112,14 +128,14 @@ class LogInProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    final loginData = EmailAndPasswordData(email: _email, password: _password);
+    final loginData = SignInUserData(email: _email, password: _password);
     loginWithEmailAndPassword(context, loginData);
     notifyListeners();
   }
 
   void loginWithEmailAndPassword(
-      BuildContext context, EmailAndPasswordData loginData) async {
-    final result = await loginWithEmailAndPasswordUseCase(loginData);
+      BuildContext context, SignInUserData signInData) async {
+    final result = await loginWithEmailAndPasswordUseCase(signInData);
 
     result.fold((l) {
       InAppNotification.serverFailure(
@@ -145,9 +161,10 @@ class LogInProvider with ChangeNotifier {
 
   void validateSignUp(BuildContext context) {
     if (_isLoadingEmailVerification) return;
+    validateName();
     validateEmail();
     validateConfirmPassword();
-    if (_isEmailNotValid || _isConfirmPasswordNotValid) {
+    if (_isNameNotValid || _isEmailNotValid || _isConfirmPasswordNotValid) {
       InAppNotification.invalidEmailAndPassword(
         context: context,
       );
@@ -155,13 +172,14 @@ class LogInProvider with ChangeNotifier {
       return;
     }
 
-    final signUpData = EmailAndPasswordData(email: _email, password: _password);
+    final signUpData =
+        SignInUserData(name: _name, email: _email, password: _password);
     createWithEmailAndPassword(context, signUpData);
     notifyListeners();
   }
 
   void createWithEmailAndPassword(
-      BuildContext context, EmailAndPasswordData signUpData) async {
+      BuildContext context, SignInUserData signUpData) async {
     _isLoadingEmailVerification = true;
     final result = await createWithEmailAndPasswordUseCase(signUpData);
 

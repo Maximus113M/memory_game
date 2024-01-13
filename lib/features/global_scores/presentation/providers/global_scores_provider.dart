@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/features/global_scores/domain/entities/global_score_entity.dart';
@@ -14,8 +15,9 @@ class GlobalScoresProvider with ChangeNotifier {
 
   GlobalScoresProvider({required this.getGlobalScoresStreamUseCase});
 
-  void getGlobalScores(BuildContext context) async {
+  void getGlobalScores(BuildContext context, int gameMode) async {
     isLoadingGlobalScores = true;
+    this.gameMode = gameMode;
     final result = await getGlobalScoresStreamUseCase!(gameMode);
     result.fold(
       (l) =>
@@ -52,5 +54,10 @@ class GlobalScoresProvider with ChangeNotifier {
       default:
         return [];
     }
+  }
+
+  void goToScoresView(BuildContext context, int gameDifficulty) {
+    getGlobalScores(context, gameDifficulty);
+    GoRouter.of(context).push('/scores-view');
   }
 }

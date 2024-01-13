@@ -1,29 +1,31 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memory_game/core/errors/exceptions.dart';
-import 'package:memory_game/features/login/data/models/email_and_password_data.dart';
+import 'package:memory_game/features/sign_in/data/models/sign_in_user_data.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class LoginDataSource {
-  Future<UserCredential?> loginWithEmailAndPassword(
-      EmailAndPasswordData emailAndPasswordData);
+abstract class SignInDataSource {
+  Future<UserCredential?> loginWithEmailAndPassword(SignInUserData signInData);
 
   Future<UserCredential?> createUserWithEmailAndPassword(
-      EmailAndPasswordData emailAndPasswordData);
+      SignInUserData signUpData);
+
+  Future<void> registerUserDb(SignInUserData signUpData, User? user);
 }
 
-class LoginDataSourceImpl extends LoginDataSource {
+class SignInDataSourceImpl extends SignInDataSource {
   final FirebaseAuth firebaseAuth;
+  final FirebaseFirestore db;
 
-  LoginDataSourceImpl({required this.firebaseAuth});
+  SignInDataSourceImpl({required this.firebaseAuth, required this.db});
 
   @override
   Future<UserCredential?> loginWithEmailAndPassword(
-      EmailAndPasswordData emailAndPasswordData) async {
+      SignInUserData signInData) async {
     try {
       UserCredential userCredential =
           await firebaseAuth.signInWithEmailAndPassword(
-              email: emailAndPasswordData.email,
-              password: emailAndPasswordData.password);
+              email: signInData.email, password: signInData.password);
       return userCredential;
     } on FirebaseAuthException catch (e) {
       String message = 'Login error, please, check your credentials';
@@ -42,12 +44,14 @@ class LoginDataSourceImpl extends LoginDataSource {
 
   @override
   Future<UserCredential?> createUserWithEmailAndPassword(
-      EmailAndPasswordData emailAndPasswordData) async {
+      SignInUserData signUpData) async {
     try {
       UserCredential userCredential =
           await firebaseAuth.createUserWithEmailAndPassword(
-              email: emailAndPasswordData.email,
-              password: emailAndPasswordData.password);
+              email: signUpData.email, password: signUpData.password);
+
+      await registerUserDb(signUpData, userCredential.user);
+
       return userCredential;
     } on FirebaseAuthException catch (e) {
       String message = 'Error de Registro';
@@ -60,6 +64,27 @@ class LoginDataSourceImpl extends LoginDataSource {
       }
       throw LoginException(
         message: message,
+      );
+    } on LoginException catch (e) {
+      throw LoginException(
+        message: e.message,
+      );
+    }
+  }
+
+  @override
+  Future<void> registerUserDb(SignInUserData signUpData, User? user) async {
+    try {
+      if (user != null) {
+        signUpData.id = user.uid;
+        await db
+            .collection("users")
+            .doc(user.uid)
+            .set(signUpData.toFirestore());
+      }
+    } catch (e) {
+      throw LoginException(
+        message: 'An error occurred while registering the user',
       );
     }
   }

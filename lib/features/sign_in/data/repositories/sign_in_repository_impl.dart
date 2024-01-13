@@ -1,23 +1,23 @@
 import 'package:memory_game/core/errors/failures.dart';
 import 'package:memory_game/core/errors/exceptions.dart';
-import 'package:memory_game/features/login/data/datasources/login_datasource.dart';
-import 'package:memory_game/features/login/data/models/email_and_password_data.dart';
-import 'package:memory_game/features/login/domain/repositories/login_repository.dart';
+import 'package:memory_game/features/sign_in/data/models/sign_in_user_data.dart';
+import 'package:memory_game/features/sign_in/data/datasources/sign_in_datasource.dart';
+import 'package:memory_game/features/sign_in/domain/repositories/sign_in_repository.dart';
 
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-class LoginRepositoryImpl implements LoginRepository {
-  LoginDataSource loginDataSource;
+class SignInRepositoryImpl implements SignInRepository {
+  SignInDataSource signInDataSource;
 
-  LoginRepositoryImpl({required this.loginDataSource});
+  SignInRepositoryImpl({required this.signInDataSource});
 
   @override
   Future<Either<LoginFailure, UserCredential?>> loginWithEmailAndPassword(
-      EmailAndPasswordData emailAndPassword) async {
+      SignInUserData signInData) async {
     try {
       return Right(
-        await loginDataSource.loginWithEmailAndPassword(emailAndPassword),
+        await signInDataSource.loginWithEmailAndPassword(signInData),
       );
     } on LoginException catch (e) {
       return Left(
@@ -28,10 +28,10 @@ class LoginRepositoryImpl implements LoginRepository {
 
   @override
   Future<Either<LoginFailure, UserCredential?>> createWithEmailAndPassword(
-      EmailAndPasswordData emailAndPassword) async {
+      SignInUserData signUpData) async {
     try {
       return Right(
-        await loginDataSource.createUserWithEmailAndPassword(emailAndPassword),
+        await signInDataSource.createUserWithEmailAndPassword(signUpData),
       );
     } on LoginException catch (e) {
       return Left(

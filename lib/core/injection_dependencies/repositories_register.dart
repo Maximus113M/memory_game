@@ -1,6 +1,6 @@
 import 'package:memory_game/injection_container.dart';
-import 'package:memory_game/features/login/domain/repositories/login_repository.dart';
-import 'package:memory_game/features/login/data/repositories/login_repository_impl.dart';
+import 'package:memory_game/features/sign_in/domain/repositories/sign_in_repository.dart';
+import 'package:memory_game/features/sign_in/data/repositories/sign_in_repository_impl.dart';
 import 'package:memory_game/features/global_scores/domain/repositories/global_scores_repository.dart';
 import 'package:memory_game/features/global_scores/data/repositories/global_scores_repository_impl.dart';
 
@@ -10,9 +10,9 @@ void registerRepositories() {
       homeDataSource: sl(),
     ),
   );*/
-  sl.registerLazySingleton<LoginRepository>(
-    () => LoginRepositoryImpl(
-      loginDataSource: sl(),
+  sl.registerLazySingleton<SignInRepository>(
+    () => SignInRepositoryImpl(
+      signInDataSource: sl(),
     ),
   );
   sl.registerLazySingleton<GlobalScoresRepository>(

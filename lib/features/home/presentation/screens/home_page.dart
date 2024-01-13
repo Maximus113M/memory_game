@@ -8,8 +8,9 @@ import 'package:provider/provider.dart';
 
 class HomePage extends StatelessWidget {
   static const name = '/home';
+  final HomeProvider homeProvider;
 
-  const HomePage({super.key});
+  const HomePage({super.key, required this.homeProvider});
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +39,24 @@ class HomePage extends StatelessWidget {
             ),
           ],
         ),
+        actions: [
+          IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.settings,
+                color: AppColors.contrast,
+                size: 30,
+              )),
+          IconButton(
+              onPressed: () {
+                homeProvider.signOut(context);
+              },
+              icon: Icon(
+                Icons.logout,
+                color: AppColors.contrast,
+                size: 28,
+              ))
+        ],
       ),
       body: HomePageBody(
         homeProvider: Provider.of<HomeProvider>(context),

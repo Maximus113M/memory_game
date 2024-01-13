@@ -11,7 +11,7 @@ class SplashBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    splashProvider.goToLogIn(context);
+    splashProvider.appInit(context);
 
     return Container(
       height: ScreenSize.height,

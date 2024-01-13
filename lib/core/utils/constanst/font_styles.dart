@@ -13,6 +13,7 @@ class FontStyles {
   static const double sp26 = .065;
   static const double sp24 = .060;
   static const double sp23 = .059;
+  static const double sp22 = .055;
   static const double sp20 = .052;
   static const double sp18 = .045;
   static const double sp16 = .041;
@@ -73,6 +74,11 @@ class FontStyles {
         fontWeight: FontWeight.w700,
       );
   static TextStyle heading10(Color color) => TextStyle(
+        color: color,
+        fontSize: ScreenSize.width * sp23,
+        fontWeight: FontWeight.w600,
+      );
+  static TextStyle heading11(Color color) => TextStyle(
         color: color,
         fontSize: ScreenSize.width * sp23,
         fontWeight: FontWeight.w700,
