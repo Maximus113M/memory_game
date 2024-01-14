@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
+import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
 import 'package:memory_game/core/shared/widgets/buttons/custom_filled_buttons.dart';
-import 'package:memory_game/features/game/domain/entities/game_statistics_model.dart';
 
 class CustomGameDialog extends StatelessWidget {
   final GameStatisticsModel gameStatisticsModel;

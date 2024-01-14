@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memory_game/core/helpers/use_case.dart';
 
 import 'package:memory_game/core/utils/constanst/app_constans.dart';
 import 'package:memory_game/core/utils/constanst/in_app_notification.dart';
@@ -7,10 +8,12 @@ import 'package:memory_game/features/sign_in/domain/use_cases/login_with_email_a
 import 'package:memory_game/features/sign_in/domain/use_cases/create_with_email_and_password_use_case.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:memory_game/features/sign_in/domain/use_cases/verify_current_session_use_case.dart';
 
 class SignInProvider with ChangeNotifier {
-  final LoginWithEmailAndPasswordUseCase loginWithEmailAndPasswordUseCase;
-  final CreateWithEmailAndPasswordUseCase createWithEmailAndPasswordUseCase;
+  final LoginWithEmailAndPasswordUseCase? loginWithEmailAndPasswordUseCase;
+  final CreateWithEmailAndPasswordUseCase? createWithEmailAndPasswordUseCase;
+  final VerifyCurrentSessionUseCase? verifyCurrentSessionUseCase;
   bool isHidenPassword = true;
   bool isHidenConfirmPassword = true;
   bool _isNameNotValid = false;
@@ -18,14 +21,16 @@ class SignInProvider with ChangeNotifier {
   bool _isPasswordNotValid = false;
   bool _isConfirmPasswordNotValid = false;
   bool _isLoadingEmailVerification = false;
+  bool isValidateUserData = false;
   String _name = '';
   String _email = '';
   String _password = '';
   String _confirmPassword = '';
 
   SignInProvider({
-    required this.loginWithEmailAndPasswordUseCase,
-    required this.createWithEmailAndPasswordUseCase,
+    this.loginWithEmailAndPasswordUseCase,
+    this.createWithEmailAndPasswordUseCase,
+    this.verifyCurrentSessionUseCase,
   });
 
   bool get isNameNotValid => _isNameNotValid;
@@ -135,19 +140,23 @@ class SignInProvider with ChangeNotifier {
 
   void loginWithEmailAndPassword(
       BuildContext context, SignInUserData signInData) async {
-    final result = await loginWithEmailAndPasswordUseCase(signInData);
+    final result = await loginWithEmailAndPasswordUseCase!(signInData);
 
     result.fold((l) {
       InAppNotification.serverFailure(
         context: context,
         message: l.message,
       );
-    }, (credential) {
+    }, (credential) async {
       if (credential == null) return;
       if (credential.user == null) return;
       if (credential.user!.emailVerified) {
-        GoRouter.of(context).pushReplacement('/home');
-        notifyListeners();
+        isValidateUserData = true;
+        await verifyCurrentSessionUseCase!(NoParams()).then((value) {
+          isValidateUserData = false;
+          notifyListeners();
+          GoRouter.of(context).pushReplacement('/home');
+        });
       } else {
         InAppNotification.showAppNotification(
             context: context,
@@ -181,7 +190,7 @@ class SignInProvider with ChangeNotifier {
   void createWithEmailAndPassword(
       BuildContext context, SignInUserData signUpData) async {
     _isLoadingEmailVerification = true;
-    final result = await createWithEmailAndPasswordUseCase(signUpData);
+    final result = await createWithEmailAndPasswordUseCase!(signUpData);
 
     result.fold(
       (l) {

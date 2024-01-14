@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
-import 'package:memory_game/features/global_scores/domain/entities/global_score_entity.dart';
+import 'package:memory_game/core/shared/models/scores_data_model.dart';
 
 class ScoreListView extends StatelessWidget {
-  final List<GlobalScoreEntity> scoreList;
+  final List<ScoresDataModel> scoreList;
   final Color textColor;
   const ScoreListView({
     super.key,

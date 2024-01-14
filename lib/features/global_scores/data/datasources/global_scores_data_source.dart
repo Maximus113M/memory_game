@@ -1,11 +1,11 @@
 import 'package:memory_game/core/services/server.dart';
 import 'package:memory_game/core/errors/exceptions.dart';
-import 'package:memory_game/features/global_scores/domain/entities/global_score_entity.dart';
+import 'package:memory_game/core/shared/models/scores_data_model.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class GlobalScoresDataSource {
-  Future<List<GlobalScoreEntity>> getGlobalScoresList(int gameMode);
+  Future<List<ScoresDataModel>> getGlobalScoresList(int gameMode);
 }
 
 class GlobalScoresDataSourceImpl extends GlobalScoresDataSource {
@@ -14,20 +14,23 @@ class GlobalScoresDataSourceImpl extends GlobalScoresDataSource {
   GlobalScoresDataSourceImpl({required this.db});
 
   @override
-  Future<List<GlobalScoreEntity>> getGlobalScoresList(int gameMode) async {
+  Future<List<ScoresDataModel>> getGlobalScoresList(int gameMode) async {
     try {
-      List<GlobalScoreEntity> globalScoresList = [];
+      List<ScoresDataModel> globalScoresList = [];
       final QuerySnapshot queryGlobalScores = await db
           .collection(Server.globalScores)
           .where("game_mode", isEqualTo: gameMode)
           .get();
 
       for (var document in queryGlobalScores.docs) {
-        globalScoresList.add(GlobalScoreEntity.fromJson(document));
+        globalScoresList.add(ScoresDataModel.fromJson(document));
       }
       return globalScoresList;
     } catch (e) {
-      throw GlobalScoresException(message: 'A server error has occurred');
+      throw ServerException(
+        message: 'A server error has occurred',
+        type: ExceptionType.globalScoresException,
+      );
     }
   }
 }

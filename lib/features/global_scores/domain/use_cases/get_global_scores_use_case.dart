@@ -1,19 +1,17 @@
 import 'package:memory_game/core/errors/failures.dart';
 import 'package:memory_game/core/helpers/use_case.dart';
-import 'package:memory_game/features/global_scores/domain/entities/global_score_entity.dart';
+import 'package:memory_game/core/shared/models/scores_data_model.dart';
 import 'package:memory_game/features/global_scores/domain/repositories/global_scores_repository.dart';
 
 import 'package:dartz/dartz.dart';
 
-class GetGlobalScoresStreamUseCase
-    extends UseCase<List<GlobalScoreEntity>, int> {
+class GetGlobalScoresUseCase extends UseCase<List<ScoresDataModel>, int> {
   final GlobalScoresRepository globalScoresRepository;
 
-  GetGlobalScoresStreamUseCase({required this.globalScoresRepository});
+  GetGlobalScoresUseCase({required this.globalScoresRepository});
 
   @override
-  Future<Either<GlobalScoresFailure, List<GlobalScoreEntity>>> call(
-      int params) async {
+  Future<Either<ServerFailure, List<ScoresDataModel>>> call(int params) async {
     return await globalScoresRepository.getGlobalScoreList(params);
   }
 }

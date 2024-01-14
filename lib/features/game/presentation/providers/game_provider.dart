@@ -1,15 +1,18 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:memory_game/core/utils/utils.dart';
 
 import 'package:memory_game/features/game/domain/entities/card_entity.dart';
+import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
+import 'package:memory_game/features/game/domain/use_cases.dart/game_db_register_use_case.dart';
 import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
-import 'package:memory_game/features/game/domain/entities/game_statistics_model.dart';
 import 'package:memory_game/features/game/presentation/widgets/custom_game_dialog.dart';
 
 import 'package:go_router/go_router.dart';
 
 class GameProvider with ChangeNotifier {
-  GameDifficulty? difficulty = GameDifficulty.easy;
+  final GameDbRegisterUseCase? gameDbRegisterUseCase;
+  GameDifficulty difficulty = GameDifficulty.easy;
   bool isMemorizing = false;
   int countdownLimit = 6;
   Duration duration = const Duration(seconds: 0);
@@ -28,7 +31,7 @@ class GameProvider with ChangeNotifier {
   Color? cardBackColor;
   Color? cardBackIconColor;
 
-  GameProvider();
+  GameProvider({required this.gameDbRegisterUseCase});
 
   void completeCardList() {
     completedCardList.addAll(cardList);
@@ -133,20 +136,24 @@ class GameProvider with ChangeNotifier {
   void isWonGame(BuildContext context) {
     if (foundCardsCounter == completedCardList.length) {
       gameEnd();
-      final timeBonusScore = timeBonus();
-      final attemptsBonusScore = attemptsBonus();
+
+      final timeBonusScore =
+          AppFunctions.getTimeBonus(difficulty: difficulty, duration: duration);
+      final attemptsBonusScore = AppFunctions.getAttemptsBonus(
+          difficulty: difficulty, attemptsCounter: attemptsCounter + 1);
 
       final gameStatisticsModel = GameStatisticsModel(
         attempts: attemptsCounter + 1,
         score: gameScore(
-          attemptsBonus: attemptsBonusScore,
-          timeBonus: timeBonusScore,
-        ),
+            attemptsBonus: attemptsBonusScore, timeBonus: timeBonusScore),
         time: getTimeString(),
-        timeInSeconds: duration.inSeconds,
         timeBonus: timeBonusScore,
         attemptsBonus: attemptsBonusScore,
+        gameMode: difficulty,
       );
+      /* if (gameStatisticsModel.score > 0) {
+        registerGameScore(context, gameStatisticsModel);
+      }*/
       showModalDialog(context, gameStatisticsModel);
     }
   }
@@ -203,98 +210,20 @@ class GameProvider with ChangeNotifier {
   }
 
   int gameScore({required int timeBonus, required int attemptsBonus}) {
-    int baseScore = 0;
-    switch (difficulty) {
-      case GameDifficulty.easy:
-        baseScore =
-            (3600 + (8 / attemptsCounter * 100 - duration.inSeconds * 8))
-                .floor();
-        break;
-      case GameDifficulty.medium:
-        baseScore =
-            (3600 + (10 / attemptsCounter * 100 - duration.inSeconds * 12))
-                .floor();
-        break;
-      case GameDifficulty.hard:
-        baseScore =
-            (3600 + (10 / attemptsCounter * 100 - duration.inSeconds * 14))
-                .floor();
-        break;
-      default:
-        baseScore = 0;
-        break;
-    }
+    int baseScore = AppFunctions.getBaseGameScore(
+        difficulty: difficulty,
+        attemptsCounter: attemptsCounter,
+        duration: duration);
+
     return baseScore + timeBonus + attemptsBonus;
   }
 
-  int timeBonus() {
-    int timeBonus = 0;
-    switch (difficulty) {
-      case GameDifficulty.easy:
-        if (duration.inSeconds <= 15) {
-          timeBonus += 16;
-          if (duration.inSeconds <= 8) {
-            timeBonus += 16;
-          }
-        }
-        break;
-      case GameDifficulty.medium:
-        if (duration.inSeconds <= 15) {
-          timeBonus += 30;
-          if (duration.inSeconds <= 10) {
-            timeBonus += 30;
-          }
-        }
-        break;
-      case GameDifficulty.hard:
-        if (duration.inSeconds <= 15) {
-          timeBonus += 35;
-          if (duration.inSeconds <= 10) {
-            timeBonus += 35;
-          }
-        }
-        break;
-      default:
-        timeBonus = 0;
-        break;
-    }
-    return timeBonus;
-  }
+  void registerGameScore(
+      BuildContext context, GameStatisticsModel gameStatistics) async {
+    final result = await gameDbRegisterUseCase!(gameStatistics);
 
-  int attemptsBonus() {
-    int attemptsBonus = 0;
-    switch (difficulty) {
-      case GameDifficulty.easy:
-        if (attemptsCounter <= 12) {
-          attemptsBonus += 8;
-          if (attemptsCounter <= 10) {
-            attemptsBonus += 8;
-            if (attemptsCounter <= 8) {
-              attemptsBonus += 8;
-            }
-          }
-        }
-        break;
-      case GameDifficulty.medium:
-        if (attemptsCounter <= 12) {
-          attemptsBonus += 30;
-          if (attemptsCounter <= 10) {
-            attemptsBonus += 30;
-          }
-        }
-        break;
-      case GameDifficulty.hard:
-        if (attemptsCounter <= 12) {
-          attemptsBonus += 35;
-          if (attemptsCounter <= 10) {
-            attemptsBonus += 35;
-          }
-        }
-        break;
-      default:
-        attemptsBonus = 0;
-        break;
-    }
-    return attemptsBonus;
+    result.fold((l) {
+      InAppNotification.serverFailure(context: context, message: l.message);
+    }, (r) => print(r));
   }
 }

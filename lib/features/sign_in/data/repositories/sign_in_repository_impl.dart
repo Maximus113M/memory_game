@@ -1,4 +1,5 @@
 import 'package:memory_game/core/errors/failures.dart';
+import 'package:memory_game/core/helpers/use_case.dart';
 import 'package:memory_game/core/errors/exceptions.dart';
 import 'package:memory_game/features/sign_in/data/models/sign_in_user_data.dart';
 import 'package:memory_game/features/sign_in/data/datasources/sign_in_datasource.dart';
@@ -13,29 +14,50 @@ class SignInRepositoryImpl implements SignInRepository {
   SignInRepositoryImpl({required this.signInDataSource});
 
   @override
-  Future<Either<LoginFailure, UserCredential?>> loginWithEmailAndPassword(
+  Future<Either<ServerFailure, UserCredential?>> loginWithEmailAndPassword(
       SignInUserData signInData) async {
     try {
       return Right(
         await signInDataSource.loginWithEmailAndPassword(signInData),
       );
-    } on LoginException catch (e) {
+    } on ServerException catch (e) {
       return Left(
-        LoginFailure(message: e.message),
+        ServerFailure(
+          message: e.message,
+          type: ExceptionType.singInException,
+        ),
       );
     }
   }
 
   @override
-  Future<Either<LoginFailure, UserCredential?>> createWithEmailAndPassword(
+  Future<Either<ServerFailure, UserCredential?>> createWithEmailAndPassword(
       SignInUserData signUpData) async {
     try {
       return Right(
         await signInDataSource.createUserWithEmailAndPassword(signUpData),
       );
-    } on LoginException catch (e) {
+    } on ServerException catch (e) {
       return Left(
-        LoginFailure(message: e.message),
+        ServerFailure(
+          message: e.message,
+          type: ExceptionType.singInException,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerFailure, bool>> verifyCurrentSession(
+      NoParams noParams) async {
+    try {
+      return Right(await signInDataSource.verifyCurrentSession());
+    } on ServerException catch (e) {
+      return left(
+        ServerFailure(
+          message: e.message,
+          type: ExceptionType.singInException,
+        ),
       );
     }
   }

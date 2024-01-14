@@ -1,4 +1,6 @@
+import 'package:memory_game/features/game/data/datasources/game_data_source.dart';
 import 'package:memory_game/injection_container.dart';
+import 'package:memory_game/features/splash/data/datasources/splash_data_source.dart';
 import 'package:memory_game/features/sign_in/data/datasources/sign_in_datasource.dart';
 import 'package:memory_game/features/global_scores/data/datasources/global_scores_data_source.dart';
 
@@ -11,9 +13,20 @@ void registerDataSources() {
       db: sl(),
     ),
   );*/
+  sl.registerLazySingleton<SplashDataSource>(
+    () => SplashDataSourceImpl(
+      firebaseAuth: sl(),
+      db: sl(),
+    ),
+  );
   sl.registerLazySingleton<SignInDataSource>(
     () => SignInDataSourceImpl(
       firebaseAuth: sl(),
+      db: sl(),
+    ),
+  );
+  sl.registerLazySingleton<GameDataSource>(
+    () => GameDataSourceImpl(
       db: sl(),
     ),
   );

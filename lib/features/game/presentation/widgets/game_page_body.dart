@@ -4,7 +4,6 @@ import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/shared/widgets/shared_widgets.dart';
 import 'package:memory_game/features/game/presentation/widgets/card_body.dart';
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
-import 'package:memory_game/features/game/domain/entities/game_statistics_model.dart';
 
 //import 'package:flip_card/flip_card.dart';
 //import 'package:flip_card/flip_card_controller.dart';
@@ -95,18 +94,6 @@ class GamePageBody extends StatelessWidget {
                   text: 'Retry',
                   icon: Icons.restart_alt_outlined,
                 ),
-                CustomFilledButton(
-                  text: 'Dialog',
-                  onPress: () {
-                    final gameStatisticsModel = GameStatisticsModel(
-                      attempts: 12,
-                      score: 3200,
-                      time: '00:20',
-                      timeInSeconds: 20,
-                    );
-                    gameProvider.showModalDialog(context, gameStatisticsModel);
-                  },
-                )
               ],
             ),
           ],

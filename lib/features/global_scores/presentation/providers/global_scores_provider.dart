@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
-import 'package:memory_game/features/global_scores/domain/entities/global_score_entity.dart';
+import 'package:memory_game/core/shared/models/scores_data_model.dart';
 import 'package:memory_game/features/global_scores/domain/use_cases/get_global_scores_use_case.dart';
 
 import 'package:go_router/go_router.dart';
 
 class GlobalScoresProvider with ChangeNotifier {
-  final GetGlobalScoresStreamUseCase? getGlobalScoresStreamUseCase;
-  List<GlobalScoreEntity> easyModeScoreList = [];
-  List<GlobalScoreEntity> mediumModeScoreList = [];
-  List<GlobalScoreEntity> hardModeScoreList = [];
-  List<GlobalScoreEntity> currentScoreList = [];
+  final GetGlobalScoresUseCase? getGlobalScoresStreamUseCase;
+  List<ScoresDataModel> easyModeScoreList = [];
+  List<ScoresDataModel> mediumModeScoreList = [];
+  List<ScoresDataModel> hardModeScoreList = [];
+  List<ScoresDataModel> currentScoreList = [];
   bool isLoadingGlobalScores = false;
   int gameMode = 1;
 
@@ -41,6 +41,7 @@ class GlobalScoresProvider with ChangeNotifier {
           }
         }
         selectScoreList();
+        currentScoreList.sort((a, b) => a.rank.compareTo(b.rank));
         notifyListeners();
         GoRouter.of(context).push('/global-scores-view');
       },

@@ -1,43 +1,23 @@
+import 'package:memory_game/core/errors/exceptions.dart';
+
 abstract class Failure {}
 
-class SharedFailure extends Failure {
+class SharedPreferencesFailure implements Failure {
   final String message;
+  final ExceptionType type;
 
-  SharedFailure({required this.message});
+  SharedPreferencesFailure({
+    required this.message,
+    required this.type,
+  });
 }
 
-class SplashFailure extends Failure {
+class ServerFailure implements Failure {
   final String message;
+  final ExceptionType type;
 
-  SplashFailure({required this.message});
-}
-
-class LoginFailure extends Failure {
-  final String message;
-
-  LoginFailure({required this.message});
-}
-
-class RegisterFailure extends Failure {
-  final String message;
-
-  RegisterFailure({required this.message});
-}
-
-class HomeFailure extends Failure {
-  final String message;
-
-  HomeFailure({required this.message});
-}
-
-class LocalScoresFailure extends Failure {
-  final String message;
-
-  LocalScoresFailure({required this.message});
-}
-
-class GlobalScoresFailure extends Failure {
-  final String message;
-
-  GlobalScoresFailure({required this.message});
+  ServerFailure({
+    required this.message,
+    required this.type,
+  });
 }

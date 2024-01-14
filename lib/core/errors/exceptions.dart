@@ -1,41 +1,28 @@
-class SharedException implements Exception {
+class SharedPreferenceException implements Exception {
   final String message;
+  final ExceptionType type;
 
-  SharedException({required this.message});
+  SharedPreferenceException({
+    required this.message,
+    required this.type,
+  });
 }
 
-class SplashException implements Exception {
+class ServerException implements Exception {
   final String message;
+  final ExceptionType type;
 
-  SplashException({required this.message});
+  ServerException({
+    required this.message,
+    required this.type,
+  });
 }
 
-class LoginException implements Exception {
-  final String message;
-
-  LoginException({required this.message});
-}
-
-class RegisterException implements Exception {
-  final String message;
-
-  RegisterException({required this.message});
-}
-
-class HomeException implements Exception {
-  final String message;
-
-  HomeException({required this.message});
-}
-
-class LocalScoresException implements Exception {
-  final String message;
-
-  LocalScoresException({required this.message});
-}
-
-class GlobalScoresException implements Exception {
-  final String message;
-
-  GlobalScoresException({required this.message});
+enum ExceptionType {
+  sharedException,
+  splashException,
+  singInException,
+  homeException,
+  gameException,
+  globalScoresException,
 }
