@@ -1,4 +1,4 @@
-import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
+import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
 
 class AppFunctions {
   static String getDateFormated() {

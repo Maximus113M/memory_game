@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:memory_game/features/global_config/presentation/providers/global_config_provider.dart';
 
 import 'package:memory_game/injection_container.dart';
 import 'package:memory_game/core/routes/app_router.dart';
@@ -25,6 +26,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => sl<GameProvider>()),
         ChangeNotifierProvider(create: (context) => sl<GlobalScoresProvider>()),
         ChangeNotifierProvider(create: (context) => sl<LocalScoresProvider>()),
+        ChangeNotifierProvider(create: (context) => sl<GlobalConfigProvider>()),
       ], child: const MyApp()),
     );
   });

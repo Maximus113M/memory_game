@@ -1,3 +1,4 @@
+import 'package:memory_game/features/global_config/presentation/providers/global_config_provider.dart';
 import 'package:memory_game/features/local_scores/presentation/providers/local_scores_provider.dart';
 import 'package:memory_game/injection_container.dart';
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
@@ -38,5 +39,8 @@ void registerProviders() {
       getLocalScoresUseCase: sl(),
       clearLocalScoreUseCase: sl(),
     ),
+  );
+  sl.registerLazySingleton(
+    () => GlobalConfigProvider(),
   );
 }

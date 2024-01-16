@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:memory_game/features/home/presentation/widgets/menu_list_view.dart';
+import 'package:memory_game/core/utils/utils.dart';
+import 'package:memory_game/features/home/presentation/widgets/menu_option.dart';
 import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
+
+import 'package:go_router/go_router.dart';
 
 class HomePageBody extends StatelessWidget {
   final HomeProvider homeProvider;
@@ -10,6 +13,26 @@ class HomePageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MenuListView(menuList: homeProvider.menuList);
+    return GridView.builder(
+      padding: EdgeInsets.symmetric(
+        vertical: ScreenSize.height * 0.04,
+        horizontal: 4,
+      ),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        childAspectRatio: 0.61,
+        mainAxisSpacing: 10,
+      ),
+      itemCount: 4,
+      itemBuilder: (context, index) {
+        return GestureDetector(
+          onTap: () =>
+              GoRouter.of(context).push(homeProvider.menuList[index].path),
+          child: MenuOption(
+            menuItem: homeProvider.menuList[index],
+          ),
+        );
+      },
+    );
   }
 }

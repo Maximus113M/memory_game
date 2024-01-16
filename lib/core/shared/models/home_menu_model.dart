@@ -1,36 +1,42 @@
 import 'package:flutter/material.dart';
 
-class MainMenuModel {
+class HomeMenuModel {
   final String title;
   final String subtitle;
   final IconData icon;
   final String path;
 
-  MainMenuModel({
+  HomeMenuModel({
     required this.title,
     required this.subtitle,
     required this.icon,
     required this.path,
   });
 
-  static List<MainMenuModel> mainMenuList() => [
-        MainMenuModel(
+  static List<HomeMenuModel> homeMenuList() => [
+        HomeMenuModel(
           title: 'Play',
           subtitle: 'Play and test your skills!',
           icon: Icons.sports_esports,
           path: '/game',
         ),
-        MainMenuModel(
+        HomeMenuModel(
           title: 'High scores',
-          subtitle: 'Check your high scores!',
+          subtitle: 'Check the record of your best scores!',
           icon: Icons.phone_android,
           path: '/local-scores',
         ),
-        MainMenuModel(
+        HomeMenuModel(
           title: 'Higher overall scores',
           subtitle: 'Check the world\'s 10 highest scores!',
           icon: Icons.public,
           path: '/global-scores',
+        ),
+        HomeMenuModel(
+          title: 'Configuration',
+          subtitle: 'Customize your preferences!',
+          icon: Icons.settings_suggest_sharp,
+          path: '/global-config',
         ),
       ];
 }

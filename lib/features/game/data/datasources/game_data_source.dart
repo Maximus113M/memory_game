@@ -174,7 +174,6 @@ class GameDataSourceImpl extends GameDataSource {
         gameMode: AppFunctions.getDifficultyValue(gameStatistics.gameMode),
       );
 
-      //return true;
       if (scoreList.isNotEmpty) {
         scoreList.sort((a, b) => a.rank.compareTo(b.rank));
         newScoreGameData.rank = scoreList[0].rank;

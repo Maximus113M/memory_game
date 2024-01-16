@@ -1,13 +1,13 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:memory_game/core/utils/utils.dart';
 
+import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/features/game/domain/entities/card_entity.dart';
 import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
+import 'package:memory_game/features/game/presentation/widgets/custom_game_dialog.dart';
+import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
 import 'package:memory_game/features/game/domain/use_cases.dart/score_db_register_use_case.dart';
 import 'package:memory_game/features/game/domain/use_cases.dart/score_local_register_use_case.dart';
-import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
-import 'package:memory_game/features/game/presentation/widgets/custom_game_dialog.dart';
 
 import 'package:go_router/go_router.dart';
 

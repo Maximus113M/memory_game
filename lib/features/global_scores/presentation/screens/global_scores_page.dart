@@ -1,9 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:memory_game/core/shared/models/scores_menu_model.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
+import 'package:memory_game/core/shared/models/scores_menu_model.dart';
 import 'package:memory_game/features/global_scores/presentation/widgets/global_scores_page_body.dart';
 import 'package:memory_game/features/global_scores/presentation/providers/global_scores_provider.dart';
 

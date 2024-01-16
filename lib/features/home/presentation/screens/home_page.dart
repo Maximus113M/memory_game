@@ -43,13 +43,6 @@ class HomePage extends StatelessWidget {
         ),
         actions: [
           IconButton(
-              onPressed: () {},
-              icon: const Icon(
-                Icons.settings,
-                color: AppColors.contrast,
-                size: 30,
-              )),
-          IconButton(
               onPressed: () {
                 homeProvider.signOut(context);
               },

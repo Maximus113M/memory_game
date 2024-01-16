@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
-import 'package:memory_game/core/shared/models/main_menu_model.dart';
+import 'package:memory_game/core/shared/models/home_menu_model.dart';
 
 import 'package:go_router/go_router.dart';
 
 class MenuListView extends StatelessWidget {
-  final List<MainMenuModel> menuList;
+  final List<HomeMenuModel> menuList;
 
   const MenuListView({super.key, required this.menuList});
 

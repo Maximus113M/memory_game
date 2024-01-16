@@ -92,11 +92,11 @@ class GamePageBody extends StatelessWidget {
                     gameProvider.startGame();
                   },
                   text: 'Retry',
-                  icon: Icons.restart_alt_outlined,
+                  icon: Icons.wifi_protected_setup_sharp,
                 ),
-                CustomFilledButtonIcon(
+                /*CustomFilledButtonIcon(
                   onPress: () {
-                    /*var newGameStatistics = GameStatisticsModel(
+                    var newGameStatistics = GameStatisticsModel(
                       attempts: 15,
                       gameMode: GameDifficulty.easy,
                       score: 2650,
@@ -104,11 +104,11 @@ class GamePageBody extends StatelessWidget {
                     );
                     gameProvider.scoreDbRegister(context, newGameStatistics);
                     gameProvider.scoreLocalRegister(context, newGameStatistics);
-                  */
+                  
                   },
                   text: '',
                   icon: Icons.restart_alt_outlined,
-                ),
+                ),*/
               ],
             ),
           ],

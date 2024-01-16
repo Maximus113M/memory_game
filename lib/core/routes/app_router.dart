@@ -1,3 +1,4 @@
+import 'package:memory_game/features/global_config/presentation/screens/global_config_page.dart';
 import 'package:memory_game/features/global_scores/presentation/screens/global_scores_list_view.dart';
 import 'package:memory_game/features/local_scores/presentation/screens/local_scores_list_view.dart';
 import 'package:memory_game/features/local_scores/presentation/screens/local_scores_page.dart';
@@ -62,6 +63,11 @@ final appRouter = GoRouter(
       path: '/local-scores-view',
       name: LocalScoresListView.name,
       builder: (context, state) => const LocalScoresListView(),
+    ),
+    GoRoute(
+      path: '/global-config',
+      name: GlobalConfigPage.name,
+      builder: (context, state) => const GlobalConfigPage(),
     ),
   ],
 );
