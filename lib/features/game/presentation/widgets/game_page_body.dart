@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/shared/widgets/shared_widgets.dart';
+import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
 import 'package:memory_game/features/game/presentation/widgets/card_body.dart';
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
+import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
 
 //import 'package:flip_card/flip_card.dart';
 //import 'package:flip_card/flip_card_controller.dart';
@@ -78,9 +80,7 @@ class GamePageBody extends StatelessWidget {
                         : gameProvider.startGame();
                   },
                   text: gameProvider.isTimerOn ? 'Quit' : 'Start',
-                  icon: gameProvider.isTimerOn
-                      ? Icons.stop_circle_outlined
-                      : Icons.not_started,
+                  icon: gameProvider.isTimerOn ? Icons.block : Icons.bolt,
                 ),
                 const SizedBox(
                   width: 10,
@@ -92,6 +92,21 @@ class GamePageBody extends StatelessWidget {
                     gameProvider.startGame();
                   },
                   text: 'Retry',
+                  icon: Icons.restart_alt_outlined,
+                ),
+                CustomFilledButtonIcon(
+                  onPress: () {
+                    /*var newGameStatistics = GameStatisticsModel(
+                      attempts: 15,
+                      gameMode: GameDifficulty.easy,
+                      score: 2650,
+                      time: '00:20',
+                    );
+                    gameProvider.scoreDbRegister(context, newGameStatistics);
+                    gameProvider.scoreLocalRegister(context, newGameStatistics);
+                  */
+                  },
+                  text: '',
                   icon: Icons.restart_alt_outlined,
                 ),
               ],

@@ -1,8 +1,8 @@
-class SharedPreferenceException implements Exception {
+class IsarPreferencesException implements Exception {
   final String message;
   final ExceptionType type;
 
-  SharedPreferenceException({
+  IsarPreferencesException({
     required this.message,
     required this.type,
   });
@@ -25,4 +25,5 @@ enum ExceptionType {
   homeException,
   gameException,
   globalScoresException,
+  isarPreferencesException,
 }

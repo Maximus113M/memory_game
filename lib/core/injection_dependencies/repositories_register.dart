@@ -1,3 +1,5 @@
+import 'package:memory_game/features/local_scores/data/repositories/local_scores_repository_impl.dart';
+import 'package:memory_game/features/local_scores/domain/repositories/local_scores_repository.dart';
 import 'package:memory_game/injection_container.dart';
 import 'package:memory_game/features/game/domain/repositories/game_repository.dart';
 import 'package:memory_game/features/game/data/repositories/game_repository_impl.dart';
@@ -32,6 +34,11 @@ void registerRepositories() {
   sl.registerLazySingleton<GlobalScoresRepository>(
     () => GlobalScoresRepositoryImpl(
       globalScoresDataSource: sl(),
+    ),
+  );
+  sl.registerLazySingleton<LocalScoresRepository>(
+    () => LocalScoresRepositoryImpl(
+      localScoresDataSource: sl(),
     ),
   );
 }

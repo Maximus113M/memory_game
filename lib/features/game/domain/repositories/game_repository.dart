@@ -4,6 +4,9 @@ import 'package:memory_game/features/game/data/models/game_statistics_model.dart
 import 'package:dartz/dartz.dart';
 
 abstract class GameRepository {
-  Future<Either<ServerFailure, bool>> registerScoreGame(
+  Future<Either<ServerFailure, bool>> gameScoreDbRegister(
+      GameStatisticsModel gameStatistics);
+
+  Future<Either<SharedPreferencesFailure, bool>> gameScoreLocalRegister(
       GameStatisticsModel gameStatistics);
 }

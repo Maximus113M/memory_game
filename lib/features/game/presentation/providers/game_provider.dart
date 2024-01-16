@@ -4,14 +4,16 @@ import 'package:memory_game/core/utils/utils.dart';
 
 import 'package:memory_game/features/game/domain/entities/card_entity.dart';
 import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
-import 'package:memory_game/features/game/domain/use_cases.dart/game_db_register_use_case.dart';
+import 'package:memory_game/features/game/domain/use_cases.dart/score_db_register_use_case.dart';
+import 'package:memory_game/features/game/domain/use_cases.dart/score_local_register_use_case.dart';
 import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
 import 'package:memory_game/features/game/presentation/widgets/custom_game_dialog.dart';
 
 import 'package:go_router/go_router.dart';
 
 class GameProvider with ChangeNotifier {
-  final GameDbRegisterUseCase? gameDbRegisterUseCase;
+  final ScoreDbRegisterUseCase? scoreDbRegisterUseCase;
+  final ScoreLocalRegisterUseCase? scoreLocalRegisterUseCase;
   GameDifficulty difficulty = GameDifficulty.easy;
   bool isMemorizing = false;
   int countdownLimit = 6;
@@ -31,7 +33,10 @@ class GameProvider with ChangeNotifier {
   Color? cardBackColor;
   Color? cardBackIconColor;
 
-  GameProvider({required this.gameDbRegisterUseCase});
+  GameProvider({
+    required this.scoreDbRegisterUseCase,
+    required this.scoreLocalRegisterUseCase,
+  });
 
   void completeCardList() {
     completedCardList.addAll(cardList);
@@ -142,7 +147,7 @@ class GameProvider with ChangeNotifier {
       final attemptsBonusScore = AppFunctions.getAttemptsBonus(
           difficulty: difficulty, attemptsCounter: attemptsCounter + 1);
 
-      final gameStatisticsModel = GameStatisticsModel(
+      final newGameStatistics = GameStatisticsModel(
         attempts: attemptsCounter + 1,
         score: gameScore(
             attemptsBonus: attemptsBonusScore, timeBonus: timeBonusScore),
@@ -151,10 +156,12 @@ class GameProvider with ChangeNotifier {
         attemptsBonus: attemptsBonusScore,
         gameMode: difficulty,
       );
-      /* if (gameStatisticsModel.score > 0) {
-        registerGameScore(context, gameStatisticsModel);
-      }*/
-      showModalDialog(context, gameStatisticsModel);
+      if (newGameStatistics.score > 0) {
+        //scoreDbRegister(context, newGameStatistics);
+        //print('Registration');
+        scoreLocalRegister(context, newGameStatistics);
+      }
+      showModalDialog(context, newGameStatistics);
     }
   }
 
@@ -163,7 +170,16 @@ class GameProvider with ChangeNotifier {
     showDialog(
       context: context,
       builder: (context) {
-        return CustomGameDialog(gameStatisticsModel: gameStatisticsModel);
+        return CustomGameDialog(
+          gameStatisticsModel: gameStatisticsModel,
+          saveGameScore: () => showDialog(
+            context: context,
+            builder: (context) => CustomGameDialog(
+              gameStatisticsModel: gameStatisticsModel,
+              saveGameScore: () => null,
+            ),
+          ),
+        );
       },
     );
   }
@@ -218,9 +234,18 @@ class GameProvider with ChangeNotifier {
     return baseScore + timeBonus + attemptsBonus;
   }
 
-  void registerGameScore(
+  void scoreDbRegister(
       BuildContext context, GameStatisticsModel gameStatistics) async {
-    final result = await gameDbRegisterUseCase!(gameStatistics);
+    final result = await scoreDbRegisterUseCase!(gameStatistics);
+
+    result.fold((l) {
+      InAppNotification.serverFailure(context: context, message: l.message);
+    }, (r) => print(r));
+  }
+
+  void scoreLocalRegister(
+      BuildContext context, GameStatisticsModel gameStatistics) async {
+    final result = await scoreLocalRegisterUseCase!(gameStatistics);
 
     result.fold((l) {
       InAppNotification.serverFailure(context: context, message: l.message);

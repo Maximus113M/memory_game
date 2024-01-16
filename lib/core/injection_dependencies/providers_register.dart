@@ -1,3 +1,4 @@
+import 'package:memory_game/features/local_scores/presentation/providers/local_scores_provider.dart';
 import 'package:memory_game/injection_container.dart';
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
 import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
@@ -23,12 +24,19 @@ void registerProviders() {
   );
   sl.registerLazySingleton(
     () => GameProvider(
-      gameDbRegisterUseCase: sl(),
+      scoreDbRegisterUseCase: sl(),
+      scoreLocalRegisterUseCase: sl(),
     ),
   );
   sl.registerLazySingleton(
     () => GlobalScoresProvider(
-      getGlobalScoresStreamUseCase: sl(),
+      getGlobalScoresUseCase: sl(),
+    ),
+  );
+  sl.registerLazySingleton(
+    () => LocalScoresProvider(
+      getLocalScoresUseCase: sl(),
+      clearLocalScoreUseCase: sl(),
     ),
   );
 }

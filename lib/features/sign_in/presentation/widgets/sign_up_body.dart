@@ -40,7 +40,7 @@ class SignUpBody extends StatelessWidget {
                 Text('Sign up to get started!',
                     style: FontStyles.subtitle2(AppColors.text)),
                 SizedBox(
-                  height: ScreenSize.height * 0.02,
+                  height: ScreenSize.height * 0.018,
                 ),
                 CustomTextForm(
                   icon: Icons.person_outlined,
@@ -49,8 +49,8 @@ class SignUpBody extends StatelessWidget {
                   error: logInProvider.isNameNotValid,
                   onChange: (value) => logInProvider.setName(value),
                 ),
-                const SizedBox(
-                  height: 22,
+                SizedBox(
+                  height: ScreenSize.height * 0.018,
                 ),
                 CustomTextForm(
                   icon: Icons.mail_outlined,
@@ -59,8 +59,8 @@ class SignUpBody extends StatelessWidget {
                   error: logInProvider.isEmailNotValid,
                   onChange: (value) => logInProvider.setEmail(value),
                 ),
-                const SizedBox(
-                  height: 22,
+                SizedBox(
+                  height: ScreenSize.height * 0.018,
                 ),
                 CustomTextForm(
                   icon: Icons.lock_outline,
@@ -72,8 +72,8 @@ class SignUpBody extends StatelessWidget {
                       logInProvider.togglePasswordVisibility(),
                   onChange: (value) => logInProvider.setPassword(value),
                 ),
-                const SizedBox(
-                  height: 22,
+                SizedBox(
+                  height: ScreenSize.height * 0.018,
                 ),
                 CustomTextForm(
                   icon: Icons.lock_outline,
@@ -86,19 +86,19 @@ class SignUpBody extends StatelessWidget {
                   onChange: (value) => logInProvider.setConfirmPassword(value),
                 ),
                 SizedBox(
-                  height: ScreenSize.height * 0.05,
+                  height: ScreenSize.height * 0.04,
                 ),
                 CustomFilledButton(
                   text: 'SIGN UP',
                   textStyle: FontStyles.body0(AppColors.contrast),
                   horizontalPadding: ScreenSize.width * 0.30,
-                  verticalPadding: 15,
+                  verticalPadding: 20,
                   onPress: () {
                     logInProvider.validateSignUp(context);
                   },
                 ),
                 SizedBox(
-                  height: ScreenSize.height * 0.04,
+                  height: ScreenSize.height * 0.035,
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

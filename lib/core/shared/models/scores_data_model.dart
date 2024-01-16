@@ -1,4 +1,11 @@
+import 'package:isar/isar.dart';
+
+part 'scores_data_model.g.dart';
+
+@collection
 class ScoresDataModel {
+  Id? id;
+
   final String userId;
   final String userName;
   final int attempts;

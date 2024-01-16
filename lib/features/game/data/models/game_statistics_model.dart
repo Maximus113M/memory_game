@@ -7,12 +7,14 @@ class GameStatisticsModel {
   final GameDifficulty gameMode;
   final int? timeBonus;
   final int? attemptsBonus;
+  final String? recordName;
 
   GameStatisticsModel({
     required this.attempts,
     required this.score,
     required this.time,
     required this.gameMode,
+    this.recordName,
     this.timeBonus = 0,
     this.attemptsBonus = 0,
   });

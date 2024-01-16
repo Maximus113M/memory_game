@@ -6,14 +6,18 @@ import 'package:memory_game/core/shared/widgets/buttons/custom_filled_buttons.da
 
 class CustomGameDialog extends StatelessWidget {
   final GameStatisticsModel gameStatisticsModel;
+  final Function() saveGameScore;
 
-  const CustomGameDialog({super.key, required this.gameStatisticsModel});
+  const CustomGameDialog(
+      {super.key,
+      required this.gameStatisticsModel,
+      required this.saveGameScore});
 
   @override
   Widget build(BuildContext context) {
     return Dialog(
       child: SizedBox(
-        height: ScreenSize.height * 0.66,
+        height: ScreenSize.height * 0.68,
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -73,13 +77,25 @@ class CustomGameDialog extends StatelessWidget {
                   fit: BoxFit.cover,
                 ),
               ),
-              const SizedBox(
-                height: 20,
+              SizedBox(
+                height: ScreenSize.height * 0.02,
               ),
-              CustomFilledButton(
-                text: 'Ok',
-                onPress: () => Navigator.pop(context),
-              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  CustomFilledButton(
+                    text: 'Save',
+                    horizontalPadding: ScreenSize.width * 0.1,
+                    onPress: () => saveGameScore(),
+                  ),
+                  SizedBox(width: ScreenSize.width * 0.02),
+                  CustomFilledButton(
+                    text: 'Back',
+                    horizontalPadding: ScreenSize.width * 0.1,
+                    onPress: () => Navigator.pop(context),
+                  ),
+                ],
+              )
             ],
           ),
         ),

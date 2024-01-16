@@ -5,13 +5,14 @@ import 'package:memory_game/features/game/domain/repositories/game_repository.da
 
 import 'package:dartz/dartz.dart';
 
-class GameDbRegisterUseCase extends UseCase<bool, GameStatisticsModel> {
+class ScoreLocalRegisterUseCase extends UseCase<bool, GameStatisticsModel> {
   final GameRepository gameRepository;
 
-  GameDbRegisterUseCase({required this.gameRepository});
+  ScoreLocalRegisterUseCase({required this.gameRepository});
 
   @override
-  Future<Either<ServerFailure, bool>> call(GameStatisticsModel params) async {
-    return await gameRepository.registerScoreGame(params);
+  Future<Either<SharedPreferencesFailure, bool>> call(
+      GameStatisticsModel params) async {
+    return await gameRepository.gameScoreLocalRegister(params);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:memory_game/features/game/data/datasources/game_data_source.dart';
+import 'package:memory_game/features/local_scores/data/datasources/local_scores_data_source.dart';
 import 'package:memory_game/injection_container.dart';
 import 'package:memory_game/features/splash/data/datasources/splash_data_source.dart';
 import 'package:memory_game/features/sign_in/data/datasources/sign_in_datasource.dart';
@@ -34,5 +35,8 @@ void registerDataSources() {
     () => GlobalScoresDataSourceImpl(
       db: sl(),
     ),
+  );
+  sl.registerLazySingleton<LocalScoresDataSource>(
+    () => LocalScoresDataSourceImpl(),
   );
 }
