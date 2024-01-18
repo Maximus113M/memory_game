@@ -34,7 +34,7 @@ class HomeMenuModel {
         ),
         HomeMenuModel(
           title: 'Configuration',
-          subtitle: 'Customize your preferences!',
+          subtitle: 'Customize your game and account settings!',
           icon: Icons.settings_suggest_sharp,
           path: '/global-config',
         ),

@@ -5,6 +5,7 @@ import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/features/game/domain/entities/card_entity.dart';
 import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
 import 'package:memory_game/features/game/presentation/widgets/custom_game_dialog.dart';
+import 'package:memory_game/features/game/presentation/widgets/save_game_score_dialog.dart';
 import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
 import 'package:memory_game/features/game/domain/use_cases.dart/score_db_register_use_case.dart';
 import 'package:memory_game/features/game/domain/use_cases.dart/score_local_register_use_case.dart';
@@ -14,7 +15,7 @@ import 'package:go_router/go_router.dart';
 class GameProvider with ChangeNotifier {
   final ScoreDbRegisterUseCase? scoreDbRegisterUseCase;
   final ScoreLocalRegisterUseCase? scoreLocalRegisterUseCase;
-  GameDifficulty difficulty = GameDifficulty.easy;
+  GameDifficulty currentGameMode = GameDifficulty.easy;
   bool isMemorizing = false;
   int countdownLimit = 6;
   Duration duration = const Duration(seconds: 0);
@@ -32,14 +33,38 @@ class GameProvider with ChangeNotifier {
   bool isGameEnd = false;
   Color? cardBackColor;
   Color? cardBackIconColor;
+  double gridViewAspectRatio = 1;
+  String nameRecord = 'New Game Score';
 
   GameProvider({
     required this.scoreDbRegisterUseCase,
     required this.scoreLocalRegisterUseCase,
   });
 
+  void getGameMode(GameDifficulty gameDifficulty) {
+    completedCardList.clear();
+    currentGameMode = gameDifficulty;
+    print('Changed');
+  }
+
   void completeCardList() {
-    completedCardList.addAll(cardList);
+    completedCardList.addAll(CardEntity.baseCardList);
+    switch (currentGameMode) {
+      case GameDifficulty.easy:
+        gridViewAspectRatio = 0.6;
+        break;
+      case GameDifficulty.medium:
+        gridViewAspectRatio = 0.65;
+        completedCardList.addAll(CardEntity.mediumCardList);
+        break;
+      case GameDifficulty.hard:
+        gridViewAspectRatio = 0.81;
+        completedCardList.addAll(CardEntity.mediumCardList);
+        completedCardList.addAll(CardEntity.hardCardList);
+        break;
+      default:
+        break;
+    }
     completedCardList.shuffle();
   }
 
@@ -51,6 +76,10 @@ class GameProvider with ChangeNotifier {
     }
     cardBackColor = Colors.white;
     cardBackIconColor = Colors.black;
+  }
+
+  void setNameRecord(String name) {
+    nameRecord = name;
   }
 
   void resetCardsValue() {
@@ -108,6 +137,7 @@ class GameProvider with ChangeNotifier {
   void quitGame() {
     gameEnd();
     resetGameValues();
+    notifyListeners();
   }
 
   void gameEnd() {
@@ -134,6 +164,7 @@ class GameProvider with ChangeNotifier {
     foundCardsCounter = 0;
     duration = const Duration(seconds: 0);
     isGameEnd = false;
+    nameRecord = 'New Game Score';
     completedCardList.clear();
     completeCardList();
   }
@@ -142,10 +173,10 @@ class GameProvider with ChangeNotifier {
     if (foundCardsCounter == completedCardList.length) {
       gameEnd();
 
-      final timeBonusScore =
-          AppFunctions.getTimeBonus(difficulty: difficulty, duration: duration);
+      final timeBonusScore = AppFunctions.getTimeBonus(
+          difficulty: currentGameMode, duration: duration);
       final attemptsBonusScore = AppFunctions.getAttemptsBonus(
-          difficulty: difficulty, attemptsCounter: attemptsCounter + 1);
+          difficulty: currentGameMode, attemptsCounter: attemptsCounter + 1);
 
       final newGameStatistics = GameStatisticsModel(
         attempts: attemptsCounter + 1,
@@ -154,14 +185,20 @@ class GameProvider with ChangeNotifier {
         time: getTimeString(),
         timeBonus: timeBonusScore,
         attemptsBonus: attemptsBonusScore,
-        gameMode: difficulty,
+        gameMode: currentGameMode,
       );
-      if (newGameStatistics.score > 0) {
-        //scoreDbRegister(context, newGameStatistics);
-        //print('Registration');
-        scoreLocalRegister(context, newGameStatistics);
-      }
       showModalDialog(context, newGameStatistics);
+    }
+  }
+
+  void scoreRegister(
+      BuildContext context, GameStatisticsModel newGameStatistics) {
+    if (newGameStatistics.score > 0) {
+      scoreDbRegister(context, newGameStatistics);
+      if (nameRecord != 'New Game Score') {
+        newGameStatistics.recordName = nameRecord;
+      }
+      scoreLocalRegister(context, newGameStatistics);
     }
   }
 
@@ -171,15 +208,21 @@ class GameProvider with ChangeNotifier {
       context: context,
       builder: (context) {
         return CustomGameDialog(
-          gameStatisticsModel: gameStatisticsModel,
-          saveGameScore: () => showDialog(
-            context: context,
-            builder: (context) => CustomGameDialog(
-              gameStatisticsModel: gameStatisticsModel,
-              saveGameScore: () => null,
-            ),
-          ),
-        );
+            gameStatisticsModel: gameStatisticsModel,
+            saveGameScore: () {
+              context.pop();
+              showDialog(
+                context: context,
+                builder: (context) => SaveGameScoreDialog(
+                  saveGameScore: () {
+                    scoreRegister(context, gameStatisticsModel);
+                    context.pop();
+                  },
+                  setNameRecord: (value) => setNameRecord(value),
+                  hideText: nameRecord,
+                ),
+              );
+            });
       },
     );
   }
@@ -220,14 +263,14 @@ class GameProvider with ChangeNotifier {
     return '$minutes:$seconds';
   }
 
-  void goToHome(BuildContext context) {
+  void goToHome(BuildContext context) async {
     quitGame();
     GoRouter.of(context).pop();
   }
 
   int gameScore({required int timeBonus, required int attemptsBonus}) {
     int baseScore = AppFunctions.getBaseGameScore(
-        difficulty: difficulty,
+        difficulty: currentGameMode,
         attemptsCounter: attemptsCounter,
         duration: duration);
 

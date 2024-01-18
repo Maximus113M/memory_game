@@ -16,6 +16,8 @@ abstract class SignInDataSource {
   Future<void> registerUserDb(SignInUserData signUpData, User? user);
 
   Future<bool> verifyCurrentSession();
+
+  Future<bool> sendPasswordResetEmail(String email);
 }
 
 class SignInDataSourceImpl extends SignInDataSource {
@@ -114,6 +116,22 @@ class SignInDataSourceImpl extends SignInDataSource {
     } catch (e) {
       throw ServerException(
         message: 'An error occurred while checking the session',
+        type: ExceptionType.singInException,
+      );
+    }
+  }
+
+  @override
+  Future<bool> sendPasswordResetEmail(String email) async {
+    try {
+      bool emailWasSent = false;
+      await firebaseAuth
+          .sendPasswordResetEmail(email: email)
+          .then((value) => emailWasSent = true);
+      return emailWasSent;
+    } catch (e) {
+      throw ServerException(
+        message: 'Could not send the confirmation to your email',
         type: ExceptionType.singInException,
       );
     }

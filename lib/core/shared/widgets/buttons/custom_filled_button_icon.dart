@@ -4,12 +4,16 @@ class CustomFilledButtonIcon extends StatelessWidget {
   final Function() onPress;
   final String text;
   final IconData icon;
+  final double? textSize;
+  final double? iconSize;
 
   const CustomFilledButtonIcon(
       {super.key,
       required this.onPress,
       required this.text,
-      required this.icon});
+      required this.icon,
+      this.textSize,
+      this.iconSize});
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +21,11 @@ class CustomFilledButtonIcon extends StatelessWidget {
       onPressed: onPress,
       icon: Icon(
         icon,
-        size: 30,
+        size: iconSize ?? 30,
       ),
       label: Text(
         text,
-        style: const TextStyle(fontSize: 20),
+        style: TextStyle(fontSize: textSize ?? 20),
       ),
       style: ButtonStyle(
         backgroundColor: const MaterialStatePropertyAll(Colors.black),

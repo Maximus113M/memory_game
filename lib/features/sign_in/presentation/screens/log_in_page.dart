@@ -15,7 +15,7 @@ class LogInPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.contrast,
-      body: LogInBody(logInProvider: Provider.of<SignInProvider>(context)),
+      body: LogInBody(signInProvider: Provider.of<SignInProvider>(context)),
     );
   }
 }

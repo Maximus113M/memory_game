@@ -34,16 +34,19 @@ class GlobalConfigPageBody extends StatelessWidget {
           GameModeMenuListTile(
               currentValue: globalConfigProvider.currentGameMode,
               gameModeMenuItem: globalConfigProvider.gameModeMenuOptions[0],
-              onChanged: (value) => globalConfigProvider.selectGameMode(value)),
+              onChanged: (value) =>
+                  globalConfigProvider.selectGameMode(context, value)),
           GameModeMenuListTile(
             currentValue: globalConfigProvider.currentGameMode,
             gameModeMenuItem: globalConfigProvider.gameModeMenuOptions[1],
-            onChanged: (value) => globalConfigProvider.selectGameMode(value),
+            onChanged: (value) =>
+                globalConfigProvider.selectGameMode(context, value),
           ),
           GameModeMenuListTile(
             currentValue: globalConfigProvider.currentGameMode,
             gameModeMenuItem: globalConfigProvider.gameModeMenuOptions[2],
-            onChanged: (value) => globalConfigProvider.selectGameMode(value),
+            onChanged: (value) =>
+                globalConfigProvider.selectGameMode(context, value),
           ),
           const SizedBox(
             height: 20,

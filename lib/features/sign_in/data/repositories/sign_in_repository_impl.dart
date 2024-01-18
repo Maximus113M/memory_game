@@ -51,7 +51,26 @@ class SignInRepositoryImpl implements SignInRepository {
   Future<Either<ServerFailure, bool>> verifyCurrentSession(
       NoParams noParams) async {
     try {
-      return Right(await signInDataSource.verifyCurrentSession());
+      return Right(
+        await signInDataSource.verifyCurrentSession(),
+      );
+    } on ServerException catch (e) {
+      return left(
+        ServerFailure(
+          message: e.message,
+          type: ExceptionType.singInException,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<ServerFailure, bool>> sendPasswordResetEmail(
+      String email) async {
+    try {
+      return Right(
+        await signInDataSource.sendPasswordResetEmail(email),
+      );
     } on ServerException catch (e) {
       return left(
         ServerFailure(

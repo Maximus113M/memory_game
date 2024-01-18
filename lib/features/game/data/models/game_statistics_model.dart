@@ -7,7 +7,7 @@ class GameStatisticsModel {
   final GameDifficulty gameMode;
   final int? timeBonus;
   final int? attemptsBonus;
-  final String? recordName;
+  String? recordName;
 
   GameStatisticsModel({
     required this.attempts,

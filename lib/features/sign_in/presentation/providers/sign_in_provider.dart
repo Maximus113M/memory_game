@@ -8,12 +8,15 @@ import 'package:memory_game/features/sign_in/domain/use_cases/login_with_email_a
 import 'package:memory_game/features/sign_in/domain/use_cases/create_with_email_and_password_use_case.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:memory_game/features/sign_in/domain/use_cases/send_password_reset_email_use_case.dart';
 import 'package:memory_game/features/sign_in/domain/use_cases/verify_current_session_use_case.dart';
+import 'package:memory_game/features/sign_in/presentation/widgets/reset_password_dialog.dart';
 
 class SignInProvider with ChangeNotifier {
   final LoginWithEmailAndPasswordUseCase? loginWithEmailAndPasswordUseCase;
   final CreateWithEmailAndPasswordUseCase? createWithEmailAndPasswordUseCase;
   final VerifyCurrentSessionUseCase? verifyCurrentSessionUseCase;
+  final SendPasswordResetEmailUseCase? sendPasswordResetEmailUseCase;
   bool isHidenPassword = true;
   bool isHidenConfirmPassword = true;
   bool _isNameNotValid = false;
@@ -31,6 +34,7 @@ class SignInProvider with ChangeNotifier {
     this.loginWithEmailAndPasswordUseCase,
     this.createWithEmailAndPasswordUseCase,
     this.verifyCurrentSessionUseCase,
+    this.sendPasswordResetEmailUseCase,
   });
 
   bool get isNameNotValid => _isNameNotValid;
@@ -221,6 +225,36 @@ class SignInProvider with ChangeNotifier {
                 },
               );
             },
+          );
+        }
+      },
+    );
+  }
+
+  void showResetPasswordDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => ResetPasswordDialog(
+          sendConfirmation: () => sendPasswordResetEmail(context, _email),
+          setEmail: (value) => setEmail(value),
+          hideText: 'Email'),
+    );
+  }
+
+  sendPasswordResetEmail(BuildContext context, email) async {
+    print(_email);
+    final result = await sendPasswordResetEmailUseCase!(email);
+    result.fold(
+      (l) {
+        InAppNotification.serverFailure(context: context, message: l.message);
+      },
+      (r) {
+        if (r) {
+          InAppNotification.showAppNotification(
+            context: context,
+            title: 'Please, check your email!',
+            message: 'A reset message was sent to your email address',
+            type: NotificationType.success,
           );
         }
       },

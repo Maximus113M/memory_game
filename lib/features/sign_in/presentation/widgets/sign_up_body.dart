@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/shared/widgets/shared_widgets.dart';
-import 'package:memory_game/features/sign_in/presentation/widgets/custom_text_form.dart';
+import 'package:memory_game/core/shared/widgets/inputs/custom_text_form.dart';
 import 'package:memory_game/features/sign_in/presentation/providers/sign_in_provider.dart';
 
 class SignUpBody extends StatelessWidget {
@@ -45,7 +45,7 @@ class SignUpBody extends StatelessWidget {
                 CustomTextForm(
                   icon: Icons.person_outlined,
                   text: 'Name',
-                  showPassword: false,
+                  showPasswordButton: false,
                   error: logInProvider.isNameNotValid,
                   onChange: (value) => logInProvider.setName(value),
                 ),
@@ -55,7 +55,7 @@ class SignUpBody extends StatelessWidget {
                 CustomTextForm(
                   icon: Icons.mail_outlined,
                   text: 'Email address',
-                  showPassword: false,
+                  showPasswordButton: false,
                   error: logInProvider.isEmailNotValid,
                   onChange: (value) => logInProvider.setEmail(value),
                 ),
@@ -65,7 +65,7 @@ class SignUpBody extends StatelessWidget {
                 CustomTextForm(
                   icon: Icons.lock_outline,
                   text: 'Password',
-                  showPassword: true,
+                  showPasswordButton: true,
                   isHiden: logInProvider.isHidenPassword,
                   error: logInProvider.isConfirmPasswordNotValid,
                   toggleVisibility: () =>
@@ -78,7 +78,7 @@ class SignUpBody extends StatelessWidget {
                 CustomTextForm(
                   icon: Icons.lock_outline,
                   text: 'Confirm Password',
-                  showPassword: true,
+                  showPasswordButton: true,
                   isHiden: logInProvider.isHidenConfirmPassword,
                   error: logInProvider.isConfirmPasswordNotValid,
                   toggleVisibility: () =>

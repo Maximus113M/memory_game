@@ -18,6 +18,7 @@ void registerProviders() {
       loginWithEmailAndPasswordUseCase: sl(),
       createWithEmailAndPasswordUseCase: sl(),
       verifyCurrentSessionUseCase: sl(),
+      sendPasswordResetEmailUseCase: sl(),
     ),
   );
   sl.registerLazySingleton(

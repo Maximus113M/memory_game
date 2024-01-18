@@ -13,4 +13,6 @@ abstract class SignInRepository {
       SignInUserData signUpData);
 
   Future<Either<ServerFailure, bool>> verifyCurrentSession(NoParams signUpData);
+
+  Future<Either<ServerFailure, bool>> sendPasswordResetEmail(String email);
 }
