@@ -40,7 +40,7 @@ class LocalScoresPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(right: 5),
               child: const Icon(
-                Icons.public,
+                Icons.storage,
                 color: AppColors.contrast,
               ),
             ),

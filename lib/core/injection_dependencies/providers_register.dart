@@ -42,6 +42,12 @@ void registerProviders() {
     ),
   );
   sl.registerLazySingleton(
-    () => GlobalConfigProvider(),
+    () => GlobalConfigProvider(
+      updateUserNameUseCase: sl(),
+      updateEmailUseCase: sl(),
+      updatePasswordUseCase: sl(),
+      deleteAccountUseCase: sl(),
+      validateCredentialsUseCase: sl(),
+    ),
   );
 }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:memory_game/core/shared/models/home_menu_model.dart';
 
+import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeProvider with ChangeNotifier {

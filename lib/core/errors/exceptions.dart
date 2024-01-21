@@ -26,4 +26,5 @@ enum ExceptionType {
   gameException,
   globalScoresException,
   isarPreferencesException,
+  gobalConfigureException,
 }

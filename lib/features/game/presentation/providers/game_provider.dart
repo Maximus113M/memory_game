@@ -17,7 +17,7 @@ class GameProvider with ChangeNotifier {
   final ScoreLocalRegisterUseCase? scoreLocalRegisterUseCase;
   GameDifficulty currentGameMode = GameDifficulty.easy;
   bool isMemorizing = false;
-  int countdownLimit = 6;
+  int countdownLimit = 5;
   Duration duration = const Duration(seconds: 0);
   StreamSubscription<int>? timerSubscription;
   StreamSubscription<int>? countDownSubscription;
@@ -26,11 +26,11 @@ class GameProvider with ChangeNotifier {
   CardEntity? secondCard;
   CardEntity? currentCard;
   int foundCardsCounter = 0;
-  int counter = 0;
   int attemptsCounter = 0;
   List<CardEntity> completedCardList = [];
   bool isValidating = false;
   bool isGameEnd = false;
+  bool isCloudEnable = false;
   Color? cardBackColor;
   Color? cardBackIconColor;
   double gridViewAspectRatio = 1;
@@ -44,7 +44,14 @@ class GameProvider with ChangeNotifier {
   void getGameMode(GameDifficulty gameDifficulty) {
     completedCardList.clear();
     currentGameMode = gameDifficulty;
-    print('Changed');
+  }
+
+  void getCountDownTime(int time) {
+    countdownLimit = time;
+  }
+
+  void cloudEnable(bool value) {
+    isCloudEnable = value;
   }
 
   void completeCardList() {
@@ -106,12 +113,12 @@ class GameProvider with ChangeNotifier {
       firstCard = currentCard;
       currentCard!.select();
     }
-    countTaps();
     notifyListeners();
   }
 
   void validateMatching(BuildContext context) async {
     isValidating = true;
+    attemptsCounter += 1;
     if (firstCard!.value == secondCard!.value) {
       firstCard!.found();
       secondCard!.found();
@@ -123,15 +130,7 @@ class GameProvider with ChangeNotifier {
     }
     resetCardsValue();
     isValidating = false;
-
     notifyListeners();
-  }
-
-  void countTaps() {
-    counter += 1;
-    if (counter % 2 == 0) {
-      attemptsCounter += 1;
-    }
   }
 
   void quitGame() {
@@ -159,7 +158,6 @@ class GameProvider with ChangeNotifier {
       countDownSubscription!.cancel();
       isMemorizing = false;
     }
-    counter = 0;
     attemptsCounter = 0;
     foundCardsCounter = 0;
     duration = const Duration(seconds: 0);
@@ -176,10 +174,10 @@ class GameProvider with ChangeNotifier {
       final timeBonusScore = AppFunctions.getTimeBonus(
           difficulty: currentGameMode, duration: duration);
       final attemptsBonusScore = AppFunctions.getAttemptsBonus(
-          difficulty: currentGameMode, attemptsCounter: attemptsCounter + 1);
+          difficulty: currentGameMode, attemptsCounter: attemptsCounter);
 
       final newGameStatistics = GameStatisticsModel(
-        attempts: attemptsCounter + 1,
+        attempts: attemptsCounter,
         score: gameScore(
             attemptsBonus: attemptsBonusScore, timeBonus: timeBonusScore),
         time: getTimeString(),
@@ -187,14 +185,14 @@ class GameProvider with ChangeNotifier {
         attemptsBonus: attemptsBonusScore,
         gameMode: currentGameMode,
       );
-      showModalDialog(context, newGameStatistics);
+      showEndGameDialog(context, newGameStatistics);
     }
   }
 
   void scoreRegister(
       BuildContext context, GameStatisticsModel newGameStatistics) {
     if (newGameStatistics.score > 0) {
-      scoreDbRegister(context, newGameStatistics);
+      if (isCloudEnable) scoreDbRegister(context, newGameStatistics);
       if (nameRecord != 'New Game Score') {
         newGameStatistics.recordName = nameRecord;
       }
@@ -202,7 +200,7 @@ class GameProvider with ChangeNotifier {
     }
   }
 
-  void showModalDialog(
+  void showEndGameDialog(
       BuildContext context, GameStatisticsModel gameStatisticsModel) {
     showDialog(
       context: context,
@@ -231,8 +229,8 @@ class GameProvider with ChangeNotifier {
     resetGameValues();
     isMemorizing = true;
     countDownSubscription = Stream.periodic(
-            const Duration(seconds: 1), (second) => countdownLimit - second - 1)
-        .take(6)
+            const Duration(seconds: 1), (second) => countdownLimit - second)
+        .take(countdownLimit + 1)
         .listen((timeLeft) {
       if (timeLeft == 0) {
         isMemorizing = false;
@@ -270,9 +268,11 @@ class GameProvider with ChangeNotifier {
 
   int gameScore({required int timeBonus, required int attemptsBonus}) {
     int baseScore = AppFunctions.getBaseGameScore(
-        difficulty: currentGameMode,
-        attemptsCounter: attemptsCounter,
-        duration: duration);
+      countdownTime: countdownLimit,
+      difficulty: currentGameMode,
+      attemptsCounter: attemptsCounter,
+      time: duration,
+    );
 
     return baseScore + timeBonus + attemptsBonus;
   }

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:memory_game/core/helpers/use_case.dart';
 
+import 'package:memory_game/core/helpers/use_case.dart';
 import 'package:memory_game/core/utils/constanst/app_constans.dart';
 import 'package:memory_game/core/utils/constanst/in_app_notification.dart';
 import 'package:memory_game/features/sign_in/data/models/sign_in_user_data.dart';
+import 'package:memory_game/core/shared/widgets/dialogs/custom_input_dialog.dart';
+import 'package:memory_game/features/sign_in/domain/use_cases/verify_current_session_use_case.dart';
+import 'package:memory_game/features/sign_in/domain/use_cases/send_password_reset_email_use_case.dart';
 import 'package:memory_game/features/sign_in/domain/use_cases/login_with_email_and_password_use_case.dart';
 import 'package:memory_game/features/sign_in/domain/use_cases/create_with_email_and_password_use_case.dart';
 
 import 'package:go_router/go_router.dart';
-import 'package:memory_game/features/sign_in/domain/use_cases/send_password_reset_email_use_case.dart';
-import 'package:memory_game/features/sign_in/domain/use_cases/verify_current_session_use_case.dart';
-import 'package:memory_game/features/sign_in/presentation/widgets/reset_password_dialog.dart';
 
 class SignInProvider with ChangeNotifier {
   final LoginWithEmailAndPasswordUseCase? loginWithEmailAndPasswordUseCase;
@@ -57,7 +57,7 @@ class SignInProvider with ChangeNotifier {
   }
 
   void setEmail(String email) {
-    _email = email;
+    _email = email.toLowerCase();
   }
 
   void setPassword(String password) {
@@ -234,15 +234,22 @@ class SignInProvider with ChangeNotifier {
   void showResetPasswordDialog(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => ResetPasswordDialog(
-          sendConfirmation: () => sendPasswordResetEmail(context, _email),
-          setEmail: (value) => setEmail(value),
-          hideText: 'Email'),
+      builder: (context) => CustomInputDialog(
+        title: 'Reset Password',
+        titleIcon: Icons.verified_user,
+        message:
+            'It seems that you have not memorized your password, don\'t worry, you can reset it. please enter your registered email address.',
+        inputIcon: Icons.email,
+        hideText: 'Email',
+        actionButtonTitle: 'Send',
+        actionButtonIcon: Icons.send,
+        actionButton: () => sendPasswordResetEmail(context, _email),
+        getInputValue: (value) => setEmail(value),
+      ),
     );
   }
 
   sendPasswordResetEmail(BuildContext context, email) async {
-    print(_email);
     final result = await sendPasswordResetEmailUseCase!(email);
     result.fold(
       (l) {

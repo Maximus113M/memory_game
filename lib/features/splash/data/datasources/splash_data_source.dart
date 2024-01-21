@@ -26,6 +26,7 @@ class SplashDataSourceImpl extends SplashDataSource {
 
         final userData = UserDataModel.fromJson(userJsonData);
         AuthService.userData = userData;
+        AuthService.currentUser = currentUser;
         return true;
       }
       return false;
