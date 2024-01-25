@@ -11,34 +11,30 @@ class ScoresDataModel {
   final int attempts;
   final int score;
   final int gameMode;
+  int ranking;
   final String time;
-  final String date;
-  int rank;
+  final DateTime date;
 
   ScoresDataModel({
     required this.userId,
     required this.userName,
     required this.attempts,
-    required this.rank,
     required this.score,
+    required this.gameMode,
+    required this.ranking,
     required this.time,
     required this.date,
-    required this.gameMode,
   });
-
-  void incrementRank() {
-    rank++;
-  }
 
   factory ScoresDataModel.fromJson(json) => ScoresDataModel(
         userId: json['user_id'],
         userName: json['user_name'],
         gameMode: json['game_mode'],
         attempts: json['attempts'],
-        rank: json['rank'],
         score: json['score'],
+        ranking: json['ranking'],
         time: json['time'],
-        date: json['date'],
+        date: json['date'].toDate(),
       );
 
   Map<String, dynamic> scoresDataModelToJson() {
@@ -47,8 +43,8 @@ class ScoresDataModel {
       "user_name": userName,
       "game_mode": gameMode,
       "attempts": attempts,
-      "rank": rank,
       "score": score,
+      "ranking": ranking,
       "time": time,
       "date": date,
     };

@@ -25,7 +25,7 @@ class GlobalScoresDataSourceImpl extends GlobalScoresDataSource {
       for (var document in queryGlobalScores.docs) {
         globalScoresList.add(ScoresDataModel.fromJson(document));
       }
-      globalScoresList.sort((a, b) => a.rank.compareTo(b.rank));
+      globalScoresList.sort((a, b) => a.score.compareTo(b.score));
 
       return globalScoresList;
     } catch (e) {

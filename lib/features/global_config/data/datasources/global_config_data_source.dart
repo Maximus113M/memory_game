@@ -26,6 +26,16 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
         await db
             .doc('${Server.users}/${currentUser.uid}')
             .update({'name': name});
+        final QuerySnapshot<Map<String, dynamic>> userRecords = await db
+            .collection(Server.globalScores)
+            .where('user_id', isEqualTo: currentUser.uid)
+            .get();
+        for (var doc in userRecords.docs) {
+          await db
+              .doc('${Server.globalScores}/${doc.id}')
+              .update({'user_name': name});
+        }
+        AuthService.userData!.name = name;
         return true;
       }
       return false;
@@ -45,6 +55,8 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
         await db
             .doc('${Server.users}/${currentUser.uid}')
             .update({'email': email});
+
+        AuthService.userData!.email = email;
         return true;
       }
       return false;
@@ -76,6 +88,15 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
     try {
       final currentUser = AuthService.currentUser;
       if (currentUser != null) {
+        /*final QuerySnapshot<Map<String, dynamic>> userRecords = await db
+            .collection(Server.globalScores)
+            .where('user_id', isEqualTo: currentUser.uid)
+            .get();
+
+        for (var doc in userRecords.docs) {
+          await db.doc('${Server.globalScores}/${doc.id}').delete();
+        }*/
+        await db.doc('${Server.users}/${currentUser.uid}').delete();
         await currentUser.delete();
         return true;
       }

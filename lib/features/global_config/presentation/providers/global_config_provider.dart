@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:memory_game/core/services/auth_service.dart';
-import 'package:memory_game/core/shared/widgets/dialogs/custom_input_dialog.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/helpers/use_case.dart';
+import 'package:memory_game/core/services/auth_service.dart';
+import 'package:memory_game/core/shared/widgets/dialogs/custom_input_dialog.dart';
 import 'package:memory_game/features/global_config/domain/use_cases/use_cases.dart';
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
 import 'package:memory_game/core/shared/widgets/dialogs/custom_confirmation_dialog.dart';
@@ -95,16 +95,19 @@ class GlobalConfigProvider with ChangeNotifier {
               context.pop();
               showDialog(
                 context: context,
-                builder: (context) => CustomInputDialog(
-                    title: 'Update NickName',
-                    message:
-                        'Hi ${AuthService.userData!.name}, please, enter your new nickname.',
-                    inputIcon: Icons.person,
-                    hideText: 'NickName',
-                    actionButtonIcon: Icons.send,
-                    actionButtonTitle: 'Update',
-                    actionButton: () => updateUserName(context),
-                    getInputValue: (value) => getInputValue(value)),
+                builder: (context) => StatefulBuilder(
+                  builder: (context, setState) => CustomInputDialog(
+                      title: 'Update User Name',
+                      titleIcon: Icons.person,
+                      message:
+                          'Hi ${AuthService.userData!.name}, please, enter your new nickname.',
+                      inputIcon: Icons.person,
+                      hideText: 'NickName',
+                      actionButtonIcon: Icons.send,
+                      actionButtonTitle: 'Update',
+                      actionButton: () => updateUserName(context, setState),
+                      getInputValue: (value) => getInputValue(value)),
+                ),
               );
               break;
             case AccountOption.updateEmail:
@@ -113,6 +116,7 @@ class GlobalConfigProvider with ChangeNotifier {
                 context: context,
                 builder: (context) => CustomInputDialog(
                     title: 'Update Email',
+                    titleIcon: Icons.email,
                     message:
                         'Hi ${AuthService.userData!.name}, please, enter the new email address.',
                     inputIcon: Icons.email,
@@ -145,8 +149,17 @@ class GlobalConfigProvider with ChangeNotifier {
     isValidating = false;
   }
 
-  void updateUserName(BuildContext context) async {
+  void updateUserName(BuildContext context, StateSetter setState) async {
     if (inputValue.isEmpty || inputValue.length > 25) return;
+    if (inputValue == AuthService.userData!.name) {
+      InAppNotification.showAppNotification(
+          title: 'You are already using this username',
+          context: context,
+          message: '$inputValue is your current user name!',
+          type: NotificationType.warning);
+      return;
+    }
+    loadingDialog(context);
     final result = await updateUserNameUseCase(inputValue);
     result.fold((l) {
       InAppNotification.serverFailure(
@@ -156,6 +169,7 @@ class GlobalConfigProvider with ChangeNotifier {
     }, (r) {
       if (r) {
         context.pop();
+        setState(() {});
         return InAppNotification.showAppNotification(
             context: context,
             title: successTitle,
@@ -171,9 +185,25 @@ class GlobalConfigProvider with ChangeNotifier {
   }
 
   void updateEmail(BuildContext context, String email) async {
-    if (inputValue.isEmpty) return;
+    if (inputValue.isEmpty ||
+        !AppConstans.emailRegExp.hasMatch(inputValue.toLowerCase())) {
+      InAppNotification.showAppNotification(
+          title: 'Incorrect email format',
+          context: context,
+          message: 'Please, enter a valid email format',
+          type: NotificationType.warning);
+      return;
+    }
+    if (inputValue == AuthService.userData!.email) {
+      InAppNotification.showAppNotification(
+          title: 'You are already using this email address',
+          context: context,
+          message: '$inputValue is your current email address!',
+          type: NotificationType.warning);
+      return;
+    }
 
-    final result = await updateEmailUseCase(email);
+    final result = await updateEmailUseCase(email.toLowerCase());
     result.fold(
       (l) {
         InAppNotification.serverFailure(
@@ -231,6 +261,7 @@ class GlobalConfigProvider with ChangeNotifier {
   void deleteAccountConfirmationDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (context) {
         return CustomConfirmationDialog(
           title: 'Delete Account',
@@ -238,7 +269,6 @@ class GlobalConfigProvider with ChangeNotifier {
           message:
               'You will not be able to revert this action, your personal data, game scores and other files will be deleted. Are you sure to continue?',
           mainAction: () {
-            context.pop();
             deleteAccount(context);
           },
         );
@@ -255,20 +285,38 @@ class GlobalConfigProvider with ChangeNotifier {
           message: l.message,
         );
       },
-      (r) {
+      (r) async {
         if (r) {
-          return InAppNotification.showAppNotification(
+          InAppNotification.showAppNotification(
               context: context,
-              title: successTitle,
-              message: successMessage,
+              title: 'Account successfully deleted',
+              message:
+                  'Hi ${AuthService.userData!.name}, your account has been deleted, we hope to see you again soon. -Memory Game Team.',
               type: successType);
+          await Future.delayed(const Duration(seconds: 4))
+              .then((value) => GoRouter.of(context).pushReplacement('/login'));
+        } else {
+          InAppNotification.showAppNotification(
+              context: context,
+              title: failTitle,
+              message: failMessage,
+              type: failType);
         }
-        InAppNotification.showAppNotification(
-            context: context,
-            title: failTitle,
-            message: failMessage,
-            type: failType);
       },
+    );
+  }
+
+  void loadingDialog(BuildContext context) {
+    showDialog(
+      barrierDismissible: true,
+      barrierColor: AppColors.disabled.withOpacity(0.5),
+      context: context,
+      builder: (context) => const Center(
+        heightFactor: 1,
+        child: CircularProgressIndicator(
+          color: AppColors.text,
+        ),
+      ),
     );
   }
 }

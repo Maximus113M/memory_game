@@ -14,6 +14,7 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    homeProvider.initMusic();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppColors.text,

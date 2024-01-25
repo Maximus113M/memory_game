@@ -8,4 +8,8 @@ class AppAssets {
   static String awardIcon = 'assets/images/awardIcon.png';
   static String google = 'assets/logos/googleLogo.png';
   static String meta = 'assets/logos/metaLogo.png';
+  static String foundCards = 'sounds/coin_c_02.mp3';
+  static String winGame = 'sounds/success-1.mp3';
+  static String gameMusic = 'sounds/the-last-piano.mp3';
+  static String gameMusic2 = 'sounds/a-life-with-no.mp3';
 }

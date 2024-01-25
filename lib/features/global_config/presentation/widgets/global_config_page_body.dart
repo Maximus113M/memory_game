@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/features/global_config/presentation/providers/global_config_provider.dart';
 import 'package:memory_game/features/global_config/presentation/widgets/game_mode_menu_list_tile.dart';
-import 'package:provider/provider.dart';
 
 class GlobalConfigPageBody extends StatelessWidget {
   final GlobalConfigProvider globalConfigProvider;
@@ -112,7 +111,8 @@ class GlobalConfigPageBody extends StatelessWidget {
                       Icons.mail,
                       () => globalConfigProvider.verifyCredentialsDialog(
                           context, AccountOption.updateEmail)),
-                  accountOption('Update password', Icons.key, () => null),
+                  accountOption('Update password', Icons.key,
+                      () => globalConfigProvider.loadingDialog(context)),
                   accountOption(
                       'Delete Account',
                       Icons.person_off,

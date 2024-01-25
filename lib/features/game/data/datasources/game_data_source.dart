@@ -48,7 +48,7 @@ class GameDataSourceImpl extends GameDataSource {
             .where('game_mode',
                 isEqualTo:
                     AppFunctions.getDifficultyValue(gameStatistics.gameMode))
-            .orderBy('rank')
+            .orderBy('ranking')
             .limitToLast(1)
             .get();
 
@@ -73,28 +73,28 @@ class GameDataSourceImpl extends GameDataSource {
           userId: userData.id,
           userName: userData.name,
           attempts: gameStatistics.attempts,
-          rank: 1,
           score: gameStatistics.score,
           time: gameStatistics.time,
-          date: AppFunctions.getDateFormated(),
+          ranking: 1,
+          date: DateTime.timestamp(),
           gameMode: AppFunctions.getDifficultyValue(gameStatistics.gameMode),
         );
 
         if (scoresList.isNotEmpty) {
-          scoresList.sort((a, b) => a.rank.compareTo(b.rank));
-          newScoreGameData.rank = scoresList[0].rank;
+          scoresList.sort((a, b) => b.score.compareTo(a.score));
+          newScoreGameData.ranking = scoresList[0].ranking;
           for (var scoreItem in scoresList) {
-            scoreItem.incrementRank();
+            scoreItem.ranking = scoreItem.ranking + 1;
           }
           scoresList.insert(0, newScoreGameData);
-          scoresList.removeWhere((element) => element.rank > 10);
+          scoresList.removeWhere((element) => element.ranking > 10);
           isMergeable = true;
           await uploadGameScoreToDb(scoresList, isMergeable);
         } else {
           if (lastScoreRecord != null) {
-            newScoreGameData.rank = lastScoreRecord.rank + 1;
+            newScoreGameData.ranking = lastScoreRecord.ranking + 1;
           }
-          if (newScoreGameData.rank <= 10) {
+          if (newScoreGameData.ranking <= 10) {
             scoresList.add(newScoreGameData);
             await uploadGameScoreToDb(scoresList, isMergeable);
           }
@@ -118,7 +118,7 @@ class GameDataSourceImpl extends GameDataSource {
       for (var scoreDataItem in scoreDataList) {
         db
             .collection(Server.globalScores)
-            .doc("D${scoreDataItem.gameMode}-r${scoreDataItem.rank}")
+            .doc("D${scoreDataItem.gameMode}-r${scoreDataItem.ranking}")
             .set(
               scoreDataItem.scoresDataModelToJson(),
               SetOptions(
@@ -150,7 +150,7 @@ class GameDataSourceImpl extends GameDataSource {
             .filter()
             .gameModeEqualTo(
                 AppFunctions.getDifficultyValue(gameStatistics.gameMode))
-            .sortByRankDesc()
+            .sortByRankingDesc()
             .findFirst();
 
         if (lastScoreItem != null) {
@@ -164,35 +164,36 @@ class GameDataSourceImpl extends GameDataSource {
       }
 
       ScoresDataModel newScoreGameData = ScoresDataModel(
-        userId: '$lastIndex',
-        userName: gameStatistics.recordName ?? 'Game Record-$lastIndex',
+        userId: AuthService.userData!.id,
+        userName: gameStatistics.recordName ??
+            'Game Record-${DateTime.now().toString().split('.')[0]}',
         attempts: gameStatistics.attempts,
-        rank: 1,
+        ranking: 1,
         score: gameStatistics.score,
         time: gameStatistics.time,
-        date: AppFunctions.getDateFormated(),
+        date: DateTime.timestamp(),
         gameMode: AppFunctions.getDifficultyValue(gameStatistics.gameMode),
       );
 
       if (scoreList.isNotEmpty) {
-        scoreList.sort((a, b) => a.rank.compareTo(b.rank));
-        newScoreGameData.rank = scoreList[0].rank;
+        scoreList.sort((a, b) => b.score.compareTo(a.score));
+        newScoreGameData.ranking = scoreList[0].ranking;
 
         for (var scoreItem in scoreList) {
-          scoreItem.incrementRank();
+          scoreItem.ranking = scoreItem.ranking + 1;
         }
         scoreList.insert(0, newScoreGameData);
-        scoreList.removeWhere((element) => element.rank > 20);
+        scoreList.removeWhere((element) => element.ranking > 20);
 
         return await uploadGameScoreToLocal(scoreList);
       } else {
         if (lastScoreItem != null) {
-          newScoreGameData.rank = lastScoreItem.rank + 1;
+          newScoreGameData.ranking = lastScoreItem.ranking + 1;
           scoreList.add(newScoreGameData);
         } else {
           scoreList.add(newScoreGameData);
         }
-        if (newScoreGameData.rank > 20) return false;
+        if (newScoreGameData.ranking > 20) return false;
 
         return await uploadGameScoreToLocal(scoreList);
       }

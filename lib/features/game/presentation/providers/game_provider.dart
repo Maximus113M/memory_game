@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
+import 'package:memory_game/core/services/audio_service.dart';
 import 'package:memory_game/features/game/domain/entities/card_entity.dart';
 import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
 import 'package:memory_game/features/game/presentation/widgets/custom_game_dialog.dart';
@@ -31,10 +32,12 @@ class GameProvider with ChangeNotifier {
   bool isValidating = false;
   bool isGameEnd = false;
   bool isCloudEnable = false;
+  bool isFound = false;
   Color? cardBackColor;
   Color? cardBackIconColor;
   double gridViewAspectRatio = 1;
   String nameRecord = 'New Game Score';
+  bool isSoundReady = false;
 
   GameProvider({
     required this.scoreDbRegisterUseCase,
@@ -100,6 +103,8 @@ class GameProvider with ChangeNotifier {
     if (isValidating || !isTimerOn) {
       return;
     }
+
+    isFound = false;
     currentCard = completedCardList[index];
 
     if (currentCard!.isSelected || currentCard!.isFound) {
@@ -120,10 +125,13 @@ class GameProvider with ChangeNotifier {
     isValidating = true;
     attemptsCounter += 1;
     if (firstCard!.value == secondCard!.value) {
+      AudioService().playFoundSound();
       firstCard!.found();
       secondCard!.found();
+      isFound = true;
       foundCardsCounter += 2;
       isWonGame(context);
+
       await Future.delayed(const Duration(milliseconds: 250));
     } else {
       await Future.delayed(const Duration(milliseconds: 600));
@@ -167,10 +175,10 @@ class GameProvider with ChangeNotifier {
     completeCardList();
   }
 
-  void isWonGame(BuildContext context) {
+  void isWonGame(BuildContext context) async {
     if (foundCardsCounter == completedCardList.length) {
+      AudioService().playWinningSound();
       gameEnd();
-
       final timeBonusScore = AppFunctions.getTimeBonus(
           difficulty: currentGameMode, duration: duration);
       final attemptsBonusScore = AppFunctions.getAttemptsBonus(

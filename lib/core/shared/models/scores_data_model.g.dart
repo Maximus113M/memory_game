@@ -25,16 +25,16 @@ const ScoresDataModelSchema = CollectionSchema(
     r'date': PropertySchema(
       id: 1,
       name: r'date',
-      type: IsarType.string,
+      type: IsarType.dateTime,
     ),
     r'gameMode': PropertySchema(
       id: 2,
       name: r'gameMode',
       type: IsarType.long,
     ),
-    r'rank': PropertySchema(
+    r'ranking': PropertySchema(
       id: 3,
-      name: r'rank',
+      name: r'ranking',
       type: IsarType.long,
     ),
     r'score': PropertySchema(
@@ -78,7 +78,6 @@ int _scoresDataModelEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.date.length * 3;
   bytesCount += 3 + object.time.length * 3;
   bytesCount += 3 + object.userId.length * 3;
   bytesCount += 3 + object.userName.length * 3;
@@ -92,9 +91,9 @@ void _scoresDataModelSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeLong(offsets[0], object.attempts);
-  writer.writeString(offsets[1], object.date);
+  writer.writeDateTime(offsets[1], object.date);
   writer.writeLong(offsets[2], object.gameMode);
-  writer.writeLong(offsets[3], object.rank);
+  writer.writeLong(offsets[3], object.ranking);
   writer.writeLong(offsets[4], object.score);
   writer.writeString(offsets[5], object.time);
   writer.writeString(offsets[6], object.userId);
@@ -109,9 +108,9 @@ ScoresDataModel _scoresDataModelDeserialize(
 ) {
   final object = ScoresDataModel(
     attempts: reader.readLong(offsets[0]),
-    date: reader.readString(offsets[1]),
+    date: reader.readDateTime(offsets[1]),
     gameMode: reader.readLong(offsets[2]),
-    rank: reader.readLong(offsets[3]),
+    ranking: reader.readLong(offsets[3]),
     score: reader.readLong(offsets[4]),
     time: reader.readString(offsets[5]),
     userId: reader.readString(offsets[6]),
@@ -131,7 +130,7 @@ P _scoresDataModelDeserializeProp<P>(
     case 0:
       return (reader.readLong(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTime(offset)) as P;
     case 2:
       return (reader.readLong(offset)) as P;
     case 3:
@@ -301,58 +300,49 @@ extension ScoresDataModelQueryFilter
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      dateEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      dateEqualTo(DateTime value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
       dateGreaterThan(
-    String value, {
+    DateTime value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
       dateLessThan(
-    String value, {
+    DateTime value, {
     bool include = false,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
         property: r'date',
         value: value,
-        caseSensitive: caseSensitive,
       ));
     });
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
       dateBetween(
-    String lower,
-    String upper, {
+    DateTime lower,
+    DateTime upper, {
     bool includeLower = true,
     bool includeUpper = true,
-    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
@@ -361,77 +351,6 @@ extension ScoresDataModelQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      dateStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      dateEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      dateContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'date',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      dateMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'date',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      dateIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'date',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      dateIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'date',
-        value: '',
       ));
     });
   }
@@ -567,45 +486,45 @@ extension ScoresDataModelQueryFilter
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      rankEqualTo(int value) {
+      rankingEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rank',
+        property: r'ranking',
         value: value,
       ));
     });
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      rankGreaterThan(
+      rankingGreaterThan(
     int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.greaterThan(
         include: include,
-        property: r'rank',
+        property: r'ranking',
         value: value,
       ));
     });
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      rankLessThan(
+      rankingLessThan(
     int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.lessThan(
         include: include,
-        property: r'rank',
+        property: r'ranking',
         value: value,
       ));
     });
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterFilterCondition>
-      rankBetween(
+      rankingBetween(
     int lower,
     int upper, {
     bool includeLower = true,
@@ -613,7 +532,7 @@ extension ScoresDataModelQueryFilter
   }) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
-        property: r'rank',
+        property: r'ranking',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1136,16 +1055,16 @@ extension ScoresDataModelQuerySortBy
     });
   }
 
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterSortBy> sortByRank() {
+  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterSortBy> sortByRanking() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rank', Sort.asc);
+      return query.addSortBy(r'ranking', Sort.asc);
     });
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterSortBy>
-      sortByRankDesc() {
+      sortByRankingDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rank', Sort.desc);
+      return query.addSortBy(r'ranking', Sort.desc);
     });
   }
 
@@ -1258,16 +1177,16 @@ extension ScoresDataModelQuerySortThenBy
     });
   }
 
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterSortBy> thenByRank() {
+  QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterSortBy> thenByRanking() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rank', Sort.asc);
+      return query.addSortBy(r'ranking', Sort.asc);
     });
   }
 
   QueryBuilder<ScoresDataModel, ScoresDataModel, QAfterSortBy>
-      thenByRankDesc() {
+      thenByRankingDesc() {
     return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'rank', Sort.desc);
+      return query.addSortBy(r'ranking', Sort.desc);
     });
   }
 
@@ -1334,10 +1253,9 @@ extension ScoresDataModelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QDistinct> distinctByDate(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScoresDataModel, ScoresDataModel, QDistinct> distinctByDate() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'date', caseSensitive: caseSensitive);
+      return query.addDistinctBy(r'date');
     });
   }
 
@@ -1348,9 +1266,10 @@ extension ScoresDataModelQueryWhereDistinct
     });
   }
 
-  QueryBuilder<ScoresDataModel, ScoresDataModel, QDistinct> distinctByRank() {
+  QueryBuilder<ScoresDataModel, ScoresDataModel, QDistinct>
+      distinctByRanking() {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'rank');
+      return query.addDistinctBy(r'ranking');
     });
   }
 
@@ -1396,7 +1315,7 @@ extension ScoresDataModelQueryProperty
     });
   }
 
-  QueryBuilder<ScoresDataModel, String, QQueryOperations> dateProperty() {
+  QueryBuilder<ScoresDataModel, DateTime, QQueryOperations> dateProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'date');
     });
@@ -1408,9 +1327,9 @@ extension ScoresDataModelQueryProperty
     });
   }
 
-  QueryBuilder<ScoresDataModel, int, QQueryOperations> rankProperty() {
+  QueryBuilder<ScoresDataModel, int, QQueryOperations> rankingProperty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'rank');
+      return query.addPropertyName(r'ranking');
     });
   }
 

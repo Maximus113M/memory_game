@@ -89,7 +89,7 @@ class CustomInputDialog extends StatelessWidget {
       actions: [
         CustomFilledButtonIcon(
           icon: actionButtonIcon ?? Icons.save,
-          text: 'Verify',
+          text: actionButtonTitle,
           onPress: () => actionButton(),
           iconSize: 21,
           textSize: 18,

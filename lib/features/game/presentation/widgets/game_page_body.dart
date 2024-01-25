@@ -1,15 +1,11 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/shared/widgets/shared_widgets.dart';
-import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
 import 'package:memory_game/features/game/presentation/widgets/card_body.dart';
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
 import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
-import 'package:memory_game/features/global_config/presentation/providers/global_config_provider.dart';
-import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
-
-import 'package:provider/provider.dart';
 
 //import 'package:flip_card/flip_card.dart';
 //import 'package:flip_card/flip_card_controller.dart';
@@ -65,10 +61,15 @@ class GamePageBody extends StatelessWidget {
                     child: gameProvider.isMemorizing ||
                             gameProvider.currentCard!.isSelected ||
                             gameProvider.currentCard!.isFound
-                        ? CardBody(
-                            icon: gameProvider.completedCardList[index].icon,
-                            cardColor: gameProvider.cardBackColor,
-                            iconColor: gameProvider.cardBackIconColor,
+                        ? Bounce(
+                            animate: gameProvider.isFound &&
+                                gameProvider.currentCard!.isSelected,
+                            duration: const Duration(milliseconds: 800),
+                            child: CardBody(
+                              icon: gameProvider.completedCardList[index].icon,
+                              cardColor: gameProvider.cardBackColor,
+                              iconColor: gameProvider.cardBackIconColor,
+                            ),
                           )
                         : const CardBody(),
                   );
@@ -104,17 +105,32 @@ class GamePageBody extends StatelessWidget {
                 text: 'Retry',
                 icon: Icons.wifi_protected_setup_sharp,
               ),
-              /*CustomFilledButtonIcon(
+              /* CustomFilledButtonIcon(
                 onPress: () {
-                  var newGameStatistics = GameStatisticsModel(
-                    attempts: 15,
-                    gameMode: GameDifficulty.easy,
-                    score: 2650,
-                    time: '00:20',
+                  const currentGameMode = GameDifficulty.hard;
+                  const attempts = 10;
+                  const time = Duration(seconds: 10);
+                  final timeBonusScore = AppFunctions.getTimeBonus(
+                      difficulty: currentGameMode, duration: time);
+                  final attemptsBonusScore = AppFunctions.getAttemptsBonus(
+                      difficulty: currentGameMode, attemptsCounter: attempts);
+                  int baseScore = AppFunctions.getBaseGameScore(
+                    countdownTime: 3,
+                    difficulty: currentGameMode,
+                    attemptsCounter: attempts,
+                    time: time,
                   );
+
+                  var total = baseScore + timeBonusScore + attemptsBonusScore;
+                  var newGameStatistics = GameStatisticsModel(
+                    attempts: attempts,
+                    gameMode: currentGameMode,
+                    score: total.toInt(),
+                    time: '${time.inSeconds}',
+                  );
+                  gameProvider.showEndGameDialog(context, newGameStatistics);
                   gameProvider.scoreDbRegister(context, newGameStatistics);
                   gameProvider.scoreLocalRegister(context, newGameStatistics);
-                
                 },
                 text: '',
                 icon: Icons.restart_alt_outlined,

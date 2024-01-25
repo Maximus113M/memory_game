@@ -113,7 +113,7 @@ class ScoreListView extends StatelessWidget {
           children: [
             Image.asset(AppAssets.awardIcon),
             Text(
-              '${scoreList[index].rank}',
+              '${index + 1}',
               style: FontStyles.heading1(AppColors.text)
                   .copyWith(fontWeight: FontWeight.w900),
             ),
@@ -125,7 +125,7 @@ class ScoreListView extends StatelessWidget {
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(20), color: AppColors.text),
           child: Text(
-            scoreList[index].date,
+            scoreList[index].date.toString().split(' ')[0],
             style: FontStyles.bodyBold3(AppColors.contrast),
           ),
         )

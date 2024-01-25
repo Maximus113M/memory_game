@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:memory_game/core/errors/exceptions.dart';
+import 'package:memory_game/core/services/auth_service.dart';
 import 'package:memory_game/core/shared/models/scores_data_model.dart';
 
 import 'package:isar/isar.dart';
@@ -35,9 +36,10 @@ class LocalScoresDataSourceImpl extends LocalScoresDataSource {
       final List<ScoresDataModel> scoreList = await isarDb.scoresDataModels
           .filter()
           .gameModeEqualTo(gameMode)
-          .sortByScore()
+          .userIdEqualTo(AuthService.userData!.id)
+          .sortByRanking()
           .findAll();
-      scoreList.sort((a, b) => a.rank.compareTo(b.rank));
+
       return scoreList;
     } catch (e) {
       print(e);
