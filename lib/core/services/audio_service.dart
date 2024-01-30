@@ -27,7 +27,13 @@ class AudioService {
         mode: PlayerMode.mediaPlayer, volume: 0.25);
   }
 
-  void quitMusic() {
+  void pauseMusic() {
     musicPlayer.pause();
+  }
+
+  void quitMusic() {
+    musicPlayer.stop();
+    foundSound.stop();
+    winGameSound.stop();
   }
 }
