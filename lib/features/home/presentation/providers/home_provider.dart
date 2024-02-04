@@ -16,7 +16,7 @@ class HomeProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   signOut(BuildContext context) {
     firebaseAuth.signOut().then((value) {
-      AudioService().quitMusic();
+      AudioService().quitAllSounds();
       WidgetsBinding.instance.removeObserver(this);
       isMusicSound = false;
       GoRouter.of(context).pushReplacement('/login');
@@ -26,8 +26,8 @@ class HomeProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   void initMusic() {
     if (isMusicSound) return;
-    AudioService().playGameMusic();
     initObserver();
+    AudioService().playGameMusic();
     isMusicSound = true;
   }
 

@@ -90,6 +90,44 @@ class GlobalConfigPageBody extends StatelessWidget {
                       )
                     ],
                   ),
+                  SizedBox(
+                    height: ScreenSize.height * 0.03,
+                  ),
+                  headerTitle('Game Sounds'),
+                  SizedBox(
+                    width: ScreenSize.width * 0.7,
+                    child: description(
+                      'Activate or deactivate the game sounds of your choice.',
+                    ),
+                  ),
+                  SizedBox(width: ScreenSize.width * 0.04),
+                  ListTile(
+                    contentPadding: const EdgeInsets.only(left: 16),
+                    leading: const Icon(Icons.music_note),
+                    title: Text(
+                      "In-Game music",
+                      style: FontStyles.body1(AppColors.text),
+                    ),
+                    trailing: Checkbox(
+                      activeColor: AppColors.text,
+                      value: true,
+                      onChanged: (value) {},
+                    ),
+                  ),
+                  ListTile(
+                    contentPadding: const EdgeInsets.only(left: 16),
+                    leading: const Icon(Icons.volume_up),
+                    title: Text(
+                      "Game sound effects",
+                      style: FontStyles.body1(AppColors.text),
+                      maxLines: 2,
+                    ),
+                    trailing: Checkbox(
+                      activeColor: AppColors.text,
+                      value: true,
+                      onChanged: (value) {},
+                    ),
+                  ),
                   const SizedBox(
                     height: 30,
                   ),

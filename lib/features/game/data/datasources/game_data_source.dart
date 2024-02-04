@@ -48,7 +48,7 @@ class GameDataSourceImpl extends GameDataSource {
             .where('game_mode',
                 isEqualTo:
                     AppFunctions.getDifficultyValue(gameStatistics.gameMode))
-            .orderBy('ranking')
+            .orderBy('score', descending: true)
             .limitToLast(1)
             .get();
 
@@ -150,7 +150,7 @@ class GameDataSourceImpl extends GameDataSource {
             .filter()
             .gameModeEqualTo(
                 AppFunctions.getDifficultyValue(gameStatistics.gameMode))
-            .sortByRankingDesc()
+            .sortByScoreDesc()
             .findFirst();
 
         if (lastScoreItem != null) {

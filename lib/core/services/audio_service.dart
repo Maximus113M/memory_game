@@ -23,16 +23,28 @@ class AudioService {
 
   void playGameMusic() async {
     musicPlayer.setReleaseMode(ReleaseMode.loop);
-    musicPlayer.play(AssetSource(AppAssets.gameMusic2),
-        mode: PlayerMode.mediaPlayer, volume: 0.25);
+    musicPlayer.play(
+      AssetSource(AppAssets.gameMusic2),
+      mode: PlayerMode.mediaPlayer,
+      volume: 0.25,
+    );
   }
 
   void pauseMusic() {
     musicPlayer.pause();
   }
 
-  void quitMusic() {
+  void quitAllSounds() {
     musicPlayer.stop();
+    foundSound.stop();
+    winGameSound.stop();
+  }
+
+  void disableMusic() {
+    musicPlayer.stop();
+  }
+
+  void disableSounds() {
     foundSound.stop();
     winGameSound.stop();
   }
