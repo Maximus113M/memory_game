@@ -25,12 +25,12 @@ class GameRepositoryImpl extends GameRepository {
   }
 
   @override
-  Future<Either<SharedPreferencesFailure, bool>> gameScoreLocalRegister(
+  Future<Either<LocalFailure, bool>> gameScoreLocalRegister(
       GameStatisticsModel gameStatistics) async {
     try {
       return Right(await gameDataSource.gameScoreLocalRegister(gameStatistics));
     } on ServerException catch (e) {
-      throw SharedPreferencesFailure(
+      throw LocalFailure(
         message: e.message,
         type: e.type,
       );

@@ -2,11 +2,11 @@ import 'package:memory_game/core/errors/exceptions.dart';
 
 abstract class Failure {}
 
-class SharedPreferencesFailure implements Failure {
+class LocalFailure implements Failure {
   final String message;
   final ExceptionType type;
 
-  SharedPreferencesFailure({
+  LocalFailure({
     required this.message,
     required this.type,
   });

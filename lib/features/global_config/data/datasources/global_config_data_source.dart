@@ -1,9 +1,12 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:memory_game/core/errors/exceptions.dart';
 import 'package:memory_game/core/services/auth_service.dart';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:memory_game/core/services/server.dart';
+import 'package:memory_game/core/shared/models/user_settings_model.dart';
+
+import 'package:isar/isar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class GlobalConfigDatasource {
   Future<bool> updateUserName(String name);
@@ -11,12 +14,25 @@ abstract class GlobalConfigDatasource {
   Future<bool> updatePassword(String password);
   Future<bool> deleteAccount();
   Future<bool> validateCrentials(String password);
+  Future<bool> updateUserSettings(UserSettingsModel userSettings);
 }
 
 class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
   final FirebaseFirestore db;
+  late Future<Isar> isarIntance;
 
-  GlobalConfigDatasourceImpl({required this.db});
+  GlobalConfigDatasourceImpl({required this.db}) {
+    isarIntance = openIsar();
+  }
+
+  Future<Isar> openIsar() async {
+    final dir = await getApplicationDocumentsDirectory();
+    if (Isar.instanceNames.isEmpty) {
+      return await Isar.open([UserSettingsModelSchema],
+          directory: dir.path, inspector: true);
+    }
+    return Future.value(Isar.getInstance());
+  }
 
   @override
   Future<bool> updateUserName(String name) async {
@@ -126,6 +142,33 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
       }
       throw ServerException(
         message: message,
+        type: ExceptionType.gobalConfigureException,
+      );
+    }
+  }
+
+  @override
+  Future<bool> updateUserSettings(UserSettingsModel userSettings) async {
+    try {
+      final currentUser = AuthService.currentUser;
+      if (currentUser != null) {
+        final isar = await isarIntance;
+        UserSettingsModel? userConfig = await isar.userSettingsModels
+            .filter()
+            .userIdEqualTo(currentUser.uid)
+            .findFirst();
+        if (userConfig != null) {
+          userConfig.updateUserSettings(userSettings);
+          final result =
+              isar.writeTxnSync(() => isar.userSettingsModels.put(userConfig));
+          print(result);
+          return true;
+        }
+      }
+      return false;
+    } catch (e) {
+      throw LocalException(
+        message: 'An error occurred while trying to get your game preferences',
         type: ExceptionType.gobalConfigureException,
       );
     }

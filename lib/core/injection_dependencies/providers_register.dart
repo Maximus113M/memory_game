@@ -48,6 +48,7 @@ void registerProviders() {
       updatePasswordUseCase: sl(),
       deleteAccountUseCase: sl(),
       validateCredentialsUseCase: sl(),
+      updateUserSettingsUseCase: sl(),
     ),
   );
 }

@@ -11,6 +11,7 @@ class GlobalScoresProvider with ChangeNotifier {
   List<ScoresDataModel> currentScoreList = [];
   bool isLoadingGlobalScores = false;
   int gameMode = 1;
+  int minAttempts = 6;
 
   GlobalScoresProvider({required this.getGlobalScoresUseCase});
 
@@ -26,12 +27,15 @@ class GlobalScoresProvider with ChangeNotifier {
         switch (gameMode) {
           case 1:
             currentScoreList = r;
+            minAttempts = 6;
             break;
           case 2:
             currentScoreList = r;
+            minAttempts = 8;
             break;
           case 3:
             currentScoreList = r;
+            minAttempts = 10;
             break;
           default:
         }

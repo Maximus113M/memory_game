@@ -61,6 +61,7 @@ class GlobalConfigPageBody extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.only(right: ScreenSize.width * 0.01),
                     child: Slider.adaptive(
+                      activeColor: Colors.amber.shade700,
                       value: globalConfigProvider.memorizingTime.toDouble(),
                       onChanged: (value) => globalConfigProvider
                           .setMemorizingTime(context, value.floor()),
@@ -84,6 +85,7 @@ class GlobalConfigPageBody extends StatelessWidget {
                       ),
                       SizedBox(width: ScreenSize.width * 0.04),
                       Switch(
+                        activeColor: Colors.amber.shade700,
                         value: globalConfigProvider.isCloudEnable,
                         onChanged: (value) =>
                             globalConfigProvider.setCloudUpload(context, value),
@@ -109,9 +111,10 @@ class GlobalConfigPageBody extends StatelessWidget {
                       style: FontStyles.body1(AppColors.text),
                     ),
                     trailing: Checkbox(
-                      activeColor: AppColors.text,
-                      value: true,
-                      onChanged: (value) {},
+                      activeColor: Colors.amber.shade700,
+                      value: globalConfigProvider.enabledInGameMusic,
+                      onChanged: (value) =>
+                          globalConfigProvider.setInGameMusic(value!),
                     ),
                   ),
                   ListTile(
@@ -123,9 +126,10 @@ class GlobalConfigPageBody extends StatelessWidget {
                       maxLines: 2,
                     ),
                     trailing: Checkbox(
-                      activeColor: AppColors.text,
-                      value: true,
-                      onChanged: (value) {},
+                      activeColor: Colors.amber.shade700,
+                      value: globalConfigProvider.enabledGameSounds,
+                      onChanged: (value) =>
+                          globalConfigProvider.setGameSounds(value!),
                     ),
                   ),
                   const SizedBox(

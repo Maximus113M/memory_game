@@ -7,6 +7,6 @@ abstract class GameRepository {
   Future<Either<ServerFailure, bool>> gameScoreDbRegister(
       GameStatisticsModel gameStatistics);
 
-  Future<Either<SharedPreferencesFailure, bool>> gameScoreLocalRegister(
+  Future<Either<LocalFailure, bool>> gameScoreLocalRegister(
       GameStatisticsModel gameStatistics);
 }

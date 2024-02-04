@@ -5,7 +5,6 @@ import 'package:memory_game/features/global_config/presentation/widgets/global_c
 import 'package:memory_game/features/global_config/presentation/providers/global_config_provider.dart';
 
 import 'package:provider/provider.dart';
-import 'package:go_router/go_router.dart';
 
 class GlobalConfigPage extends StatelessWidget {
   static const name = '/global-config';
@@ -32,7 +31,8 @@ class GlobalConfigPage extends StatelessWidget {
             Icons.arrow_back,
             color: AppColors.contrast,
           ),
-          onPressed: () => context.pop(),
+          onPressed: () =>
+              context.read<GlobalConfigProvider>().backToHome(context),
         ),
         title: Row(
           children: [

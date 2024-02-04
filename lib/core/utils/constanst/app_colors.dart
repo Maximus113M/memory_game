@@ -17,4 +17,5 @@ class AppColors {
   static const Color disabled = Color.fromRGBO(204, 204, 204, 1);
   static const Color defaultBackGround = Color.fromARGB(250, 250, 250, 255);
   static const Color scoresCardShadow = Color.fromARGB(255, 129, 100, 255);
+  static const Color winningScore = Color.fromARGB(255, 255, 202, 40);
 }

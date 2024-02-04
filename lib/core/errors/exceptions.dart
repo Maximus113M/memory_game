@@ -1,8 +1,8 @@
-class IsarPreferencesException implements Exception {
+class LocalException implements Exception {
   final String message;
   final ExceptionType type;
 
-  IsarPreferencesException({
+  LocalException({
     required this.message,
     required this.type,
   });
@@ -25,6 +25,6 @@ enum ExceptionType {
   homeException,
   gameException,
   globalScoresException,
-  isarPreferencesException,
+  localException,
   gobalConfigureException,
 }

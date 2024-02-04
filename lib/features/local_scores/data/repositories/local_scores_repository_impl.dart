@@ -13,29 +13,28 @@ class LocalScoresRepositoryImpl extends LocalScoresRepository {
   LocalScoresRepositoryImpl({required this.localScoresDataSource});
 
   @override
-  Future<Either<SharedPreferencesFailure, List<ScoresDataModel>>>
-      getLocalScoreList(int gameMode) async {
+  Future<Either<LocalFailure, List<ScoresDataModel>>> getLocalScoreList(
+      int gameMode) async {
     try {
       return Right(
         await localScoresDataSource.getLocalScoreList(gameMode),
       );
-    } on IsarPreferencesException catch (e) {
+    } on LocalException catch (e) {
       return Left(
-        SharedPreferencesFailure(message: e.message, type: e.type),
+        LocalFailure(message: e.message, type: e.type),
       );
     }
   }
 
   @override
-  Future<Either<SharedPreferencesFailure, bool>> clearLocalScores(
-      NoParams noParams) async {
+  Future<Either<LocalFailure, bool>> clearLocalScores(NoParams noParams) async {
     try {
       return Right(
         await localScoresDataSource.clearLocalScores(),
       );
-    } on IsarPreferencesException catch (e) {
+    } on LocalException catch (e) {
       return Left(
-        SharedPreferencesFailure(message: e.message, type: e.type),
+        LocalFailure(message: e.message, type: e.type),
       );
     }
   }

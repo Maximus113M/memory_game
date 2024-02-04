@@ -5,9 +5,8 @@ import 'package:memory_game/core/shared/models/scores_data_model.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class LocalScoresRepository {
-  Future<Either<SharedPreferencesFailure, List<ScoresDataModel>>>
-      getLocalScoreList(int gameMode);
+  Future<Either<LocalFailure, List<ScoresDataModel>>> getLocalScoreList(
+      int gameMode);
 
-  Future<Either<SharedPreferencesFailure, bool>> clearLocalScores(
-      NoParams noParams);
+  Future<Either<LocalFailure, bool>> clearLocalScores(NoParams noParams);
 }

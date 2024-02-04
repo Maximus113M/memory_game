@@ -5,6 +5,7 @@ import 'package:memory_game/features/home/presentation/widgets/menu_option.dart'
 import 'package:memory_game/features/home/presentation/providers/home_provider.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 
 class HomePageBody extends StatelessWidget {
   final HomeProvider homeProvider;
@@ -26,8 +27,11 @@ class HomePageBody extends StatelessWidget {
       itemCount: 4,
       itemBuilder: (context, index) {
         return GestureDetector(
-          onTap: () =>
-              GoRouter.of(context).push(homeProvider.menuList[index].path),
+          onTap: () {
+            context.read<HomeProvider>().isLocalList =
+                homeProvider.menuList[index].isLocalList;
+            GoRouter.of(context).push(homeProvider.menuList[index].path);
+          },
           child: MenuOption(
             menuItem: homeProvider.menuList[index],
           ),

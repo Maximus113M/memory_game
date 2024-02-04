@@ -87,4 +87,9 @@ void registerUseCases() {
       globalConfigRepository: sl(),
     ),
   );
+  sl.registerLazySingleton(
+    () => UpdateUserSettingsUseCase(
+      globalConfigRepository: sl(),
+    ),
+  );
 }

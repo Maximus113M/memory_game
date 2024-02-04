@@ -24,6 +24,7 @@ class GameModeMenuListTile extends StatelessWidget {
       ),
       subtitle: Text(gameModeMenuItem.subtitle),
       trailing: Radio(
+        activeColor: Colors.amber.shade700,
         groupValue: currentValue,
         value: gameModeMenuItem.gameMode,
         onChanged: (value) => onChanged(value),

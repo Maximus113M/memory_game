@@ -11,8 +11,7 @@ class ScoreLocalRegisterUseCase extends UseCase<bool, GameStatisticsModel> {
   ScoreLocalRegisterUseCase({required this.gameRepository});
 
   @override
-  Future<Either<SharedPreferencesFailure, bool>> call(
-      GameStatisticsModel params) async {
+  Future<Either<LocalFailure, bool>> call(GameStatisticsModel params) async {
     return await gameRepository.gameScoreLocalRegister(params);
   }
 }

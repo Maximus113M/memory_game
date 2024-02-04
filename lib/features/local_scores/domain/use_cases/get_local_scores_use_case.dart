@@ -11,8 +11,7 @@ class GetLocalScoresUseCase extends UseCase<List<ScoresDataModel>, int> {
   GetLocalScoresUseCase({required this.localScoresRepository});
 
   @override
-  Future<Either<SharedPreferencesFailure, List<ScoresDataModel>>> call(
-      int params) async {
+  Future<Either<LocalFailure, List<ScoresDataModel>>> call(int params) async {
     return await localScoresRepository.getLocalScoreList(params);
   }
 }

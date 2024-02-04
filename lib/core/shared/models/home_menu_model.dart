@@ -4,12 +4,14 @@ class HomeMenuModel {
   final String title;
   final String subtitle;
   final IconData icon;
+  final bool isLocalList;
   final String path;
 
   HomeMenuModel({
     required this.title,
     required this.subtitle,
     required this.icon,
+    this.isLocalList = false,
     required this.path,
   });
 
@@ -24,6 +26,7 @@ class HomeMenuModel {
           title: 'High scores',
           subtitle: 'Check the record of your best scores!',
           icon: Icons.phone_android,
+          isLocalList: true,
           path: '/local-scores',
         ),
         HomeMenuModel(

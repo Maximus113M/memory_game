@@ -8,7 +8,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 class HomeProvider extends ChangeNotifier with WidgetsBindingObserver {
   final FirebaseAuth firebaseAuth;
   List<HomeMenuModel> menuList = HomeMenuModel.homeMenuList();
-  bool isInSession = true;
+  bool isLocalList = false;
+  bool isInSession = false;
   bool isMusicSound = false;
   AppLifecycleState? _notification;
 
@@ -21,12 +22,19 @@ class HomeProvider extends ChangeNotifier with WidgetsBindingObserver {
       isMusicSound = false;
       GoRouter.of(context).pushReplacement('/login');
     });
+    isInSession = false;
+  }
+
+  void initHome() {
+    if (isInSession) return;
+    initObserver();
+    initMusic();
     isInSession = true;
   }
 
   void initMusic() {
     if (isMusicSound) return;
-    initObserver();
+    AudioService().initAudioService();
     AudioService().playGameMusic();
     isMusicSound = true;
   }

@@ -1,6 +1,7 @@
 import 'package:memory_game/core/errors/failures.dart';
 import 'package:memory_game/core/helpers/use_case.dart';
 import 'package:memory_game/core/errors/exceptions.dart';
+import 'package:memory_game/core/shared/models/user_settings_model.dart';
 import 'package:memory_game/features/global_config/data/datasources/global_config_data_source.dart';
 import 'package:memory_game/features/global_config/domain/repositories/global_config_repository.dart';
 
@@ -87,6 +88,23 @@ class GlobalConfigRepositoryImpl extends GlobalConfigRepository {
         ServerFailure(
           message: e.message,
           type: ExceptionType.gobalConfigureException,
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<LocalFailure, bool>> updateUserSettings(
+      UserSettingsModel newUserSettings) async {
+    try {
+      return Right(
+        await globalConfigDatasource.updateUserSettings(newUserSettings),
+      );
+    } on LocalException catch (e) {
+      return Left(
+        LocalFailure(
+          message: e.message,
+          type: ExceptionType.localException,
         ),
       );
     }

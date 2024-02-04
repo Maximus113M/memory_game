@@ -43,9 +43,9 @@ class LocalScoresDataSourceImpl extends LocalScoresDataSource {
       return scoreList;
     } catch (e) {
       print(e);
-      throw IsarPreferencesException(
+      throw LocalException(
         message: 'A local data error has occurred',
-        type: ExceptionType.isarPreferencesException,
+        type: ExceptionType.localException,
       );
     }
   }
@@ -59,7 +59,7 @@ class LocalScoresDataSourceImpl extends LocalScoresDataSource {
       );
       return true;
     } catch (e) {
-      throw IsarPreferencesException(
+      throw LocalException(
           message: 'An error occurred while deleting the game score',
           type: ExceptionType.gameException);
     }

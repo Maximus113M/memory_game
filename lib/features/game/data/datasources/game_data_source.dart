@@ -166,7 +166,7 @@ class GameDataSourceImpl extends GameDataSource {
       ScoresDataModel newScoreGameData = ScoresDataModel(
         userId: AuthService.userData!.id,
         userName: gameStatistics.recordName ??
-            'Game Record-${DateTime.now().toString().split('.')[0]}',
+            'Game Record ${DateTime.now().toString().split('.')[0]}',
         attempts: gameStatistics.attempts,
         ranking: 1,
         score: gameStatistics.score,
@@ -198,7 +198,7 @@ class GameDataSourceImpl extends GameDataSource {
         return await uploadGameScoreToLocal(scoreList);
       }
     } catch (e) {
-      throw IsarPreferencesException(
+      throw LocalException(
           message: 'An error occurred while registering the score game',
           type: ExceptionType.gameException);
     }
@@ -216,7 +216,7 @@ class GameDataSourceImpl extends GameDataSource {
 
       return true;
     } catch (e) {
-      throw IsarPreferencesException(
+      throw LocalException(
           message:
               'An error has occurred when uploading the game score to storage',
           type: ExceptionType.gameException);

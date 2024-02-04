@@ -2,50 +2,94 @@ import 'package:audioplayers/audioplayers.dart';
 import 'package:memory_game/core/utils/utils.dart';
 
 class AudioService {
-  final musicPlayer = AudioPlayer();
-  final foundSound = AudioPlayer();
-  final winGameSound = AudioPlayer();
+  AudioPlayer? _musicPlayer;
+  AudioPlayer? _foundSound;
+  AudioPlayer? _notMatchSound;
+  AudioPlayer? _winGameSound;
+  bool _enabledInGameMusic = true;
+  bool _enabledGameSounds = true;
   static final AudioService _instance = AudioService._();
   AudioService._();
+
   factory AudioService() {
     return _instance;
   }
 
+  void getAudioServiceSettings(
+      bool enabledInGameMusic, bool enabledGameSounds) {
+    _enabledInGameMusic = enabledInGameMusic;
+    _enabledGameSounds = enabledGameSounds;
+  }
+
+  void initAudioService() {
+    if (_enabledInGameMusic && _musicPlayer == null) {
+      _musicPlayer = AudioPlayer();
+    }
+    if (_enabledGameSounds &&
+        (_foundSound == null &&
+            _notMatchSound == null &&
+            _winGameSound == null)) {
+      _foundSound = AudioPlayer();
+      _notMatchSound = AudioPlayer();
+      _winGameSound = AudioPlayer();
+    }
+  }
+
   void playFoundSound() async {
-    await foundSound.play(AssetSource(AppAssets.foundCards),
-        mode: PlayerMode.mediaPlayer);
+    if (!_enabledGameSounds) return;
+    await _foundSound?.play(
+      AssetSource(AppAssets.foundCards),
+      mode: PlayerMode.mediaPlayer,
+    );
+  }
+
+  void playNotMatchSound() async {
+    if (!_enabledGameSounds) return;
+    await _notMatchSound?.play(
+      AssetSource(AppAssets.notMatchCards),
+      mode: PlayerMode.mediaPlayer,
+    );
   }
 
   void playWinningSound() async {
-    await winGameSound.play(AssetSource(AppAssets.winGame),
-        mode: PlayerMode.mediaPlayer);
+    if (!_enabledGameSounds) return;
+    await _winGameSound?.play(
+      AssetSource(AppAssets.winGame),
+      mode: PlayerMode.mediaPlayer,
+    );
   }
 
   void playGameMusic() async {
-    musicPlayer.setReleaseMode(ReleaseMode.loop);
-    musicPlayer.play(
+    if (!_enabledInGameMusic) return;
+    _musicPlayer?.setReleaseMode(ReleaseMode.loop);
+    _musicPlayer?.play(
       AssetSource(AppAssets.gameMusic2),
       mode: PlayerMode.mediaPlayer,
-      volume: 0.25,
+      volume: 0.4,
     );
   }
 
   void pauseMusic() {
-    musicPlayer.pause();
+    _musicPlayer?.pause();
   }
 
   void quitAllSounds() {
-    musicPlayer.stop();
-    foundSound.stop();
-    winGameSound.stop();
+    _musicPlayer?.dispose();
+    _foundSound?.dispose();
+    _notMatchSound?.dispose();
+    _winGameSound?.dispose();
   }
 
-  void disableMusic() {
-    musicPlayer.stop();
+  void setInGameMusic() {
+    if (_enabledInGameMusic) {
+      _musicPlayer?.stop();
+    } else {
+      _musicPlayer?.resume();
+    }
+    _enabledInGameMusic = !_enabledInGameMusic;
   }
 
-  void disableSounds() {
-    foundSound.stop();
-    winGameSound.stop();
+  void setGameSounds() {
+    _enabledGameSounds = !_enabledGameSounds;
   }
 }

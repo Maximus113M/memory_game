@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/helpers/use_case.dart';
 import 'package:memory_game/core/services/auth_service.dart';
+import 'package:memory_game/core/services/audio_service.dart';
+import 'package:memory_game/core/shared/models/user_settings_model.dart';
 import 'package:memory_game/core/shared/widgets/dialogs/custom_input_dialog.dart';
 import 'package:memory_game/features/global_config/domain/use_cases/use_cases.dart';
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
@@ -19,6 +21,7 @@ class GlobalConfigProvider with ChangeNotifier {
   final UpdatePasswordUseCase updatePasswordUseCase;
   final DeleteAccountUseCase deleteAccountUseCase;
   final ValidateCredentialsUseCase validateCredentialsUseCase;
+  final UpdateUserSettingsUseCase updateUserSettingsUseCase;
   final List<GameModeMenuOptions> gameModeMenuOptions =
       GameModeMenuOptions.gameModeMenuList;
   final String failTitle = 'Failed Update';
@@ -27,11 +30,15 @@ class GlobalConfigProvider with ChangeNotifier {
   final String successTitle = 'Succesful Update';
   final String successMessage = 'Update successfully completed';
   final NotificationType successType = NotificationType.success;
+
   GameDifficulty currentGameMode = GameDifficulty.easy;
   int memorizingTime = 5;
   bool isCloudEnable = false;
   bool isValidating = false;
   String inputValue = '';
+  bool enabledInGameMusic = true;
+  bool enabledGameSounds = true;
+  UserSettingsModel? userSettings;
 
   GlobalConfigProvider({
     required this.updateUserNameUseCase,
@@ -39,6 +46,7 @@ class GlobalConfigProvider with ChangeNotifier {
     required this.updatePasswordUseCase,
     required this.deleteAccountUseCase,
     required this.validateCredentialsUseCase,
+    required this.updateUserSettingsUseCase,
   });
 
   void selectGameMode(BuildContext context, GameDifficulty selectedtGameMode) {
@@ -65,6 +73,18 @@ class GlobalConfigProvider with ChangeNotifier {
 
   void getInputValue(String value) {
     inputValue = value;
+  }
+
+  void setInGameMusic(bool option) {
+    AudioService().setInGameMusic();
+    enabledInGameMusic = !enabledInGameMusic;
+    notifyListeners();
+  }
+
+  void setGameSounds(bool option) {
+    AudioService().setGameSounds();
+    enabledGameSounds = !enabledGameSounds;
+    notifyListeners();
   }
 
   void verifyCredentialsDialog(BuildContext context, AccountOption option) {
@@ -318,6 +338,56 @@ class GlobalConfigProvider with ChangeNotifier {
         ),
       ),
     );
+  }
+
+  void updateUserSettings() async {
+    final currentUser = AuthService.currentUser;
+    if (currentUser != null) {
+      userSettings = UserSettingsModel(
+        userId: currentUser.uid,
+        gameMode: currentGameMode,
+        memorizingTime: memorizingTime,
+        isCloudEnabled: isCloudEnable,
+        isGameSoundsEnabled: enabledGameSounds,
+        isInGameMusicEnabled: enabledInGameMusic,
+      );
+      if (!checkForChanges(userSettings!)) return;
+      final result = await updateUserSettingsUseCase(userSettings!);
+      result.fold(
+          (l) => /*InAppNotification.serverFailure(
+              context: context, message: l.message)*/
+              print(l.message), (r) {
+        if (r) {
+          /*InAppNotification.showAppNotification(
+              context: context,
+              title: 'Updated game settings!',
+              message: 'The game configuration has been successfully updated',
+              type: NotificationType.success);*/
+          print('The game configuration has been successfully updated');
+        }
+      });
+    }
+  }
+
+  bool checkForChanges(UserSettingsModel newUserSettings) {
+    if (AuthService.userSettings == null) return true;
+    final UserSettingsModel currenSettings = AuthService.userSettings!;
+
+    if (currenSettings.gameMode == newUserSettings.gameMode &&
+        currenSettings.memorizingTime == newUserSettings.memorizingTime &&
+        currenSettings.isCloudEnabled == newUserSettings.isCloudEnabled &&
+        currenSettings.isInGameMusicEnabled ==
+            newUserSettings.isInGameMusicEnabled &&
+        currenSettings.isGameSoundsEnabled ==
+            newUserSettings.isGameSoundsEnabled) {
+      return false;
+    }
+    return true;
+  }
+
+  void backToHome(BuildContext context) {
+    //updateUserSettings();
+    context.pop();
   }
 }
 

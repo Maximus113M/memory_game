@@ -10,7 +10,7 @@ class ClearLocalScoresUseCase extends UseCase<bool, NoParams> {
   ClearLocalScoresUseCase({required this.localScoresRepository});
 
   @override
-  Future<Either<SharedPreferencesFailure, bool>> call(NoParams params) async {
+  Future<Either<LocalFailure, bool>> call(NoParams params) async {
     return await localScoresRepository.clearLocalScores(params);
   }
 }
