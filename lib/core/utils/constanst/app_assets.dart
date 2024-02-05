@@ -12,5 +12,7 @@ class AppAssets {
   static String notMatchCards = 'sounds/cartoon-jump.mp3';
   static String winGame = 'sounds/success-1.mp3';
   static String gameMusic = 'sounds/the-last-piano.mp3';
-  static String gameMusic2 = 'sounds/a-life-with-no.mp3';
+  static String gameMusic1 = 'sounds/a-life-with-no.mp3';
+  static String gameMusic2 = 'sounds/better-day.mp3';
+  static String gameMusic3 = 'sounds/sunshine-bliss.mp3';
 }

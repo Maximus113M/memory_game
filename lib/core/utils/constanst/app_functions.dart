@@ -1,9 +1,15 @@
+import 'dart:math';
+
 import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
 
 class AppFunctions {
   static String getDateFormated() {
     final DateTime now = DateTime.now();
     return now.toString().split(' ')[0];
+  }
+
+  static int getRandomNumber(int limit) {
+    return Random().nextInt(limit);
   }
 
   static int getDifficultyValue(GameDifficulty difficulty) {

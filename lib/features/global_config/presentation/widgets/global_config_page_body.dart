@@ -114,7 +114,7 @@ class GlobalConfigPageBody extends StatelessWidget {
                       activeColor: Colors.amber.shade700,
                       value: globalConfigProvider.enabledInGameMusic,
                       onChanged: (value) =>
-                          globalConfigProvider.setInGameMusic(value!),
+                          globalConfigProvider.setInGameMusic(context, value!),
                     ),
                   ),
                   ListTile(

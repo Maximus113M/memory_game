@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/services/audio_service.dart';
+import 'package:memory_game/core/shared/models/user_settings_model.dart';
 import 'package:memory_game/features/game/domain/entities/card_entity.dart';
 import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
 import 'package:memory_game/features/game/presentation/widgets/custom_game_dialog.dart';
@@ -43,6 +44,12 @@ class GameProvider with ChangeNotifier {
     required this.scoreDbRegisterUseCase,
     required this.scoreLocalRegisterUseCase,
   });
+
+  void initGameSettings(UserSettingsModel userSettings) {
+    currentGameMode = userSettings.gameMode;
+    countdownLimit = userSettings.memorizingTime;
+    isCloudEnable = userSettings.isCloudEnabled;
+  }
 
   void getGameMode(GameDifficulty gameDifficulty) {
     completedCardList.clear();

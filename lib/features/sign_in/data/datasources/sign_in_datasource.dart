@@ -2,9 +2,13 @@ import 'package:memory_game/core/services/server.dart';
 import 'package:memory_game/core/errors/exceptions.dart';
 import 'package:memory_game/core/services/auth_service.dart';
 import 'package:memory_game/core/shared/models/user_data_model.dart';
+import 'package:memory_game/core/shared/models/user_settings_model.dart';
+import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
 import 'package:memory_game/features/sign_in/data/models/sign_in_user_data.dart';
 
+import 'package:isar/isar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class SignInDataSource {
@@ -23,8 +27,20 @@ abstract class SignInDataSource {
 class SignInDataSourceImpl extends SignInDataSource {
   final FirebaseAuth firebaseAuth;
   final FirebaseFirestore db;
+  late Future<Isar> isarIntance;
 
-  SignInDataSourceImpl({required this.firebaseAuth, required this.db});
+  SignInDataSourceImpl({required this.firebaseAuth, required this.db}) {
+    isarIntance = openIsar();
+  }
+
+  Future<Isar> openIsar() async {
+    final dir = await getApplicationDocumentsDirectory();
+    if (Isar.instanceNames.isEmpty) {
+      return await Isar.open([UserSettingsModelSchema],
+          directory: dir.path, inspector: true);
+    }
+    return Future.value(Isar.getInstance());
+  }
 
   @override
   Future<UserCredential?> loginWithEmailAndPassword(
@@ -59,6 +75,8 @@ class SignInDataSourceImpl extends SignInDataSource {
               email: signUpData.email, password: signUpData.password);
 
       await registerUserDb(signUpData, userCredential.user);
+
+      await setFirstUserSettings(userCredential.user);
 
       return userCredential;
     } on FirebaseAuthException catch (e) {
@@ -98,18 +116,39 @@ class SignInDataSourceImpl extends SignInDataSource {
     }
   }
 
+  Future<void> setFirstUserSettings(User? user) async {
+    try {
+      if (user == null) return;
+      final Isar isar = await openIsar();
+      UserSettingsModel firstUserSettings = UserSettingsModel(
+        userId: user.uid,
+        gameMode: GameDifficulty.easy,
+        memorizingTime: 5,
+        isCloudEnabled: false,
+        isInGameMusicEnabled: true,
+        isGameSoundsEnabled: true,
+      );
+      isar.writeTxnSync(() => isar.userSettingsModels.put(firstUserSettings));
+    } catch (e) {
+      throw LocalException(
+          message:
+              'An error occurred while trying to set the user\'s game configuration',
+          type: ExceptionType.localException);
+    }
+  }
+
   @override
   Future<bool> verifyCurrentSession() async {
     try {
       final currentUser = firebaseAuth.currentUser;
       AuthService.currentUser = currentUser;
-
       if (currentUser != null) {
         final userJsonData =
             await db.doc('${Server.users}/${currentUser.uid}').get();
-
         final userData = UserDataModel.fromJson(userJsonData);
         AuthService.userData = userData;
+        AuthService.userSettings = await getUserSettings(currentUser);
+
         return true;
       }
       return false;
@@ -117,6 +156,23 @@ class SignInDataSourceImpl extends SignInDataSource {
       throw ServerException(
         message: 'An error occurred while checking the session',
         type: ExceptionType.singInException,
+      );
+    }
+  }
+
+  Future<UserSettingsModel?> getUserSettings(User user) async {
+    try {
+      final Isar isar = await isarIntance;
+
+      return isar.userSettingsModels
+          .filter()
+          .userIdEqualTo(user.uid)
+          .findFirst();
+    } catch (e) {
+      throw LocalException(
+        message:
+            'An error occurred while trying to get the user\'s game configuration',
+        type: ExceptionType.userSettingsException,
       );
     }
   }

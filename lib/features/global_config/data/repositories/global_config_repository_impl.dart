@@ -22,7 +22,7 @@ class GlobalConfigRepositoryImpl extends GlobalConfigRepository {
       return Left(
         ServerFailure(
           message: e.message,
-          type: ExceptionType.gobalConfigureException,
+          type: ExceptionType.globalConfigureException,
         ),
       );
     }
@@ -38,7 +38,7 @@ class GlobalConfigRepositoryImpl extends GlobalConfigRepository {
       return Left(
         ServerFailure(
           message: e.message,
-          type: ExceptionType.gobalConfigureException,
+          type: ExceptionType.globalConfigureException,
         ),
       );
     }
@@ -54,7 +54,7 @@ class GlobalConfigRepositoryImpl extends GlobalConfigRepository {
       return Left(
         ServerFailure(
           message: e.message,
-          type: ExceptionType.gobalConfigureException,
+          type: ExceptionType.globalConfigureException,
         ),
       );
     }
@@ -70,7 +70,7 @@ class GlobalConfigRepositoryImpl extends GlobalConfigRepository {
       return Left(
         ServerFailure(
           message: e.message,
-          type: ExceptionType.gobalConfigureException,
+          type: ExceptionType.globalConfigureException,
         ),
       );
     }
@@ -87,7 +87,7 @@ class GlobalConfigRepositoryImpl extends GlobalConfigRepository {
       return Left(
         ServerFailure(
           message: e.message,
-          type: ExceptionType.gobalConfigureException,
+          type: ExceptionType.globalConfigureException,
         ),
       );
     }

@@ -34,11 +34,10 @@ class GlobalConfigProvider with ChangeNotifier {
   GameDifficulty currentGameMode = GameDifficulty.easy;
   int memorizingTime = 5;
   bool isCloudEnable = false;
-  bool isValidating = false;
-  String inputValue = '';
   bool enabledInGameMusic = true;
   bool enabledGameSounds = true;
-  UserSettingsModel? userSettings;
+  bool isValidating = false;
+  String inputValue = '';
 
   GlobalConfigProvider({
     required this.updateUserNameUseCase,
@@ -48,6 +47,15 @@ class GlobalConfigProvider with ChangeNotifier {
     required this.validateCredentialsUseCase,
     required this.updateUserSettingsUseCase,
   });
+
+  void initGlobalConfigValues(
+      BuildContext context, UserSettingsModel userSettings) {
+    currentGameMode = userSettings.gameMode;
+    memorizingTime = userSettings.memorizingTime;
+    isCloudEnable = userSettings.isCloudEnabled;
+    enabledInGameMusic = userSettings.isInGameMusicEnabled;
+    enabledGameSounds = userSettings.isGameSoundsEnabled;
+  }
 
   void selectGameMode(BuildContext context, GameDifficulty selectedtGameMode) {
     currentGameMode = selectedtGameMode;
@@ -75,9 +83,9 @@ class GlobalConfigProvider with ChangeNotifier {
     inputValue = value;
   }
 
-  void setInGameMusic(bool option) {
-    AudioService().setInGameMusic();
+  void setInGameMusic(BuildContext context, bool option) {
     enabledInGameMusic = !enabledInGameMusic;
+    AudioService().setInGameMusic();
     notifyListeners();
   }
 
@@ -343,7 +351,7 @@ class GlobalConfigProvider with ChangeNotifier {
   void updateUserSettings() async {
     final currentUser = AuthService.currentUser;
     if (currentUser != null) {
-      userSettings = UserSettingsModel(
+      final UserSettingsModel userSettings = UserSettingsModel(
         userId: currentUser.uid,
         gameMode: currentGameMode,
         memorizingTime: memorizingTime,
@@ -351,8 +359,8 @@ class GlobalConfigProvider with ChangeNotifier {
         isGameSoundsEnabled: enabledGameSounds,
         isInGameMusicEnabled: enabledInGameMusic,
       );
-      if (!checkForChanges(userSettings!)) return;
-      final result = await updateUserSettingsUseCase(userSettings!);
+      if (!checkForChanges(userSettings)) return;
+      final result = await updateUserSettingsUseCase(userSettings);
       result.fold(
           (l) => /*InAppNotification.serverFailure(
               context: context, message: l.message)*/
@@ -386,7 +394,7 @@ class GlobalConfigProvider with ChangeNotifier {
   }
 
   void backToHome(BuildContext context) {
-    //updateUserSettings();
+    updateUserSettings();
     context.pop();
   }
 }

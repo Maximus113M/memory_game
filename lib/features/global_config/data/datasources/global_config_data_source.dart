@@ -14,7 +14,7 @@ abstract class GlobalConfigDatasource {
   Future<bool> updatePassword(String password);
   Future<bool> deleteAccount();
   Future<bool> validateCrentials(String password);
-  Future<bool> updateUserSettings(UserSettingsModel userSettings);
+  Future<bool> updateUserSettings(UserSettingsModel newUserSettings);
 }
 
 class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
@@ -58,7 +58,7 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
     } catch (e) {
       throw ServerException(
           message: 'An error was ocurred while updating the data',
-          type: ExceptionType.gobalConfigureException);
+          type: ExceptionType.globalConfigureException);
     }
   }
 
@@ -79,7 +79,7 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
     } catch (e) {
       throw ServerException(
           message: 'An error occurred while updating the email',
-          type: ExceptionType.gobalConfigureException);
+          type: ExceptionType.globalConfigureException);
     }
   }
 
@@ -95,7 +95,7 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
     } catch (e) {
       throw ServerException(
           message: 'An error occurred while updating the password',
-          type: ExceptionType.gobalConfigureException);
+          type: ExceptionType.globalConfigureException);
     }
   }
 
@@ -120,7 +120,7 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
     } catch (e) {
       throw ServerException(
           message: 'An error occurred while trying to delete the user',
-          type: ExceptionType.gobalConfigureException);
+          type: ExceptionType.globalConfigureException);
     }
   }
 
@@ -142,13 +142,13 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
       }
       throw ServerException(
         message: message,
-        type: ExceptionType.gobalConfigureException,
+        type: ExceptionType.globalConfigureException,
       );
     }
   }
 
   @override
-  Future<bool> updateUserSettings(UserSettingsModel userSettings) async {
+  Future<bool> updateUserSettings(UserSettingsModel newUserSettings) async {
     try {
       final currentUser = AuthService.currentUser;
       if (currentUser != null) {
@@ -157,19 +157,29 @@ class GlobalConfigDatasourceImpl extends GlobalConfigDatasource {
             .filter()
             .userIdEqualTo(currentUser.uid)
             .findFirst();
+        late UserSettingsModel finalUserSettings;
         if (userConfig != null) {
-          userConfig.updateUserSettings(userSettings);
-          final result =
-              isar.writeTxnSync(() => isar.userSettingsModels.put(userConfig));
-          print(result);
-          return true;
+          userConfig.updateUserSettings(newUserSettings);
+          finalUserSettings = userConfig;
+        } else {
+          finalUserSettings = newUserSettings;
         }
+        isar.writeTxnSync(
+            () => isar.userSettingsModels.putSync(finalUserSettings));
+
+        AuthService.userSettings = finalUserSettings;
+        return true;
       }
       return false;
+    } on IsarError catch (e) {
+      throw LocalException(
+        message: e.message,
+        type: ExceptionType.globalConfigureException,
+      );
     } catch (e) {
       throw LocalException(
         message: 'An error occurred while trying to get your game preferences',
-        type: ExceptionType.gobalConfigureException,
+        type: ExceptionType.globalConfigureException,
       );
     }
   }

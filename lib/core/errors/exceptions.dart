@@ -26,5 +26,6 @@ enum ExceptionType {
   gameException,
   globalScoresException,
   localException,
-  gobalConfigureException,
+  globalConfigureException,
+  userSettingsException,
 }
