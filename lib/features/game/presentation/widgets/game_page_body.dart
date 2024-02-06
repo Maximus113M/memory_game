@@ -1,4 +1,3 @@
-import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
@@ -7,8 +6,8 @@ import 'package:memory_game/features/game/presentation/widgets/card_body.dart';
 import 'package:memory_game/features/game/presentation/providers/game_provider.dart';
 import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
 
-//import 'package:flip_card/flip_card.dart';
-//import 'package:flip_card/flip_card_controller.dart';
+import 'package:flip_card/flip_card.dart';
+import 'package:animate_do/animate_do.dart';
 
 class GamePageBody extends StatelessWidget {
   final GameProvider gameProvider;
@@ -17,7 +16,6 @@ class GamePageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    //final cardController = FlipCardController();
     if (gameProvider.completedCardList.isEmpty) {
       gameProvider.completeCardList();
     }
@@ -53,25 +51,55 @@ class GamePageBody extends StatelessWidget {
                   gameProvider.completedCardList[index].id = index;
                   gameProvider.currentCard =
                       gameProvider.completedCardList[index];
-                  gameProvider.setColors();
+
+                  if (gameProvider
+                          .completedCardList[index].cardKey.currentState !=
+                      null) {
+                    if (gameProvider.showingCards &&
+                        !gameProvider.isMemorizing) {
+                      gameProvider
+                          .completedCardList[index].cardKey.currentState!
+                          .toggleCard();
+                      if (gameProvider.completedCardList.length - 1 == index) {
+                        gameProvider.showingCards = false;
+                      }
+                    }
+                  }
+
+                  if (gameProvider.isMemorizing && !gameProvider.showingCards) {
+                    gameProvider.completedCardList[index].cardKey.currentState!
+                        .toggleCard();
+                    if (gameProvider.completedCardList.length - 1 == index) {
+                      gameProvider.showingCards = true;
+                    }
+                  }
+
                   return GestureDetector(
                     onTap: () {
-                      gameProvider.flipCard(context, index);
+                      gameProvider.toggleCurrentCard(index);
                     },
-                    child: gameProvider.isMemorizing ||
-                            gameProvider.currentCard!.isSelected ||
-                            gameProvider.currentCard!.isFound
-                        ? Bounce(
-                            animate: gameProvider.isFound &&
-                                gameProvider.currentCard!.isSelected,
-                            duration: const Duration(milliseconds: 800),
-                            child: CardBody(
-                              icon: gameProvider.completedCardList[index].icon,
-                              cardColor: gameProvider.cardBackColor,
-                              iconColor: gameProvider.cardBackIconColor,
-                            ),
-                          )
-                        : const CardBody(),
+                    child: FlipCard(
+                      key: gameProvider.completedCardList[index].cardKey,
+                      flipOnTouch: false,
+                      speed: 150,
+                      onFlipDone: (isFront) {
+                        if (isFront && !gameProvider.isMemorizing) {
+                          gameProvider.flipCardDone(context);
+                        }
+                      },
+                      front: const CardBody(),
+                      back: Bounce(
+                        animate: gameProvider
+                                .completedCardList[index].isFound &&
+                            gameProvider.completedCardList[index].isSelected,
+                        duration: const Duration(milliseconds: 800),
+                        child: CardBody(
+                          icon: gameProvider.completedCardList[index].icon,
+                          isFound:
+                              gameProvider.completedCardList[index].isFound,
+                        ),
+                      ),
+                    ),
                   );
                 },
               ),
@@ -86,9 +114,11 @@ class GamePageBody extends StatelessWidget {
               CustomFilledButtonIcon(
                 onPress: () {
                   if (gameProvider.isMemorizing) return;
-                  gameProvider.isTimerOn
-                      ? gameProvider.quitGame()
-                      : gameProvider.startGame();
+                  if (gameProvider.isTimerOn) {
+                    gameProvider.quitGame();
+                    return;
+                  }
+                  gameProvider.startGame();
                 },
                 text: gameProvider.isTimerOn ? 'Quit' : 'Start',
                 icon: gameProvider.isTimerOn ? Icons.block : Icons.bolt,
@@ -105,11 +135,12 @@ class GamePageBody extends StatelessWidget {
                 text: 'Retry',
                 icon: Icons.wifi_protected_setup_sharp,
               ),
-              /* CustomFilledButtonIcon(
+              //TODO PRUEBAS
+              /*CustomFilledButtonIcon(
                 onPress: () {
-                  const currentGameMode = GameDifficulty.hard;
-                  const attempts = 10;
-                  const time = Duration(seconds: 10);
+                  const currentGameMode = GameDifficulty.easy;
+                  const attempts = 6;
+                  const time = Duration(seconds: 59);
                   final timeBonusScore = AppFunctions.getTimeBonus(
                       difficulty: currentGameMode, duration: time);
                   final attemptsBonusScore = AppFunctions.getAttemptsBonus(
@@ -127,10 +158,12 @@ class GamePageBody extends StatelessWidget {
                     gameMode: currentGameMode,
                     score: total.toInt(),
                     time: '${time.inSeconds}',
+                    attemptsBonus: attemptsBonusScore,
+                    timeBonus: timeBonusScore,
                   );
                   gameProvider.showEndGameDialog(context, newGameStatistics);
-                  gameProvider.scoreDbRegister(context, newGameStatistics);
-                  gameProvider.scoreLocalRegister(context, newGameStatistics);
+                  //gameProvider.scoreDbRegister(context, newGameStatistics);
+                  //gameProvider.scoreLocalRegister(context, newGameStatistics);
                 },
                 text: '',
                 icon: Icons.restart_alt_outlined,

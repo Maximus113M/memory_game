@@ -3,8 +3,8 @@ import 'package:memory_game/core/errors/exceptions.dart';
 import 'package:memory_game/core/services/auth_service.dart';
 import 'package:memory_game/core/shared/models/user_data_model.dart';
 import 'package:memory_game/core/shared/models/user_settings_model.dart';
-import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
 import 'package:memory_game/features/sign_in/data/models/sign_in_user_data.dart';
+import 'package:memory_game/features/global_config/data/models/game_mode_menu_options.dart';
 
 import 'package:isar/isar.dart';
 import 'package:firebase_auth/firebase_auth.dart';

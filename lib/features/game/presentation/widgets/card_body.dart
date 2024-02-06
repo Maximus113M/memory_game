@@ -5,7 +5,9 @@ class CardBody extends StatelessWidget {
   final IconData? icon;
   final Color? cardColor;
   final Color? iconColor;
-  const CardBody({super.key, this.icon, this.cardColor, this.iconColor});
+  final bool? isFound;
+  const CardBody(
+      {super.key, this.icon, this.cardColor, this.iconColor, this.isFound});
 
   @override
   Widget build(BuildContext context) {
@@ -13,11 +15,19 @@ class CardBody extends StatelessWidget {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(15),
           border: Border.all(width: 1),
-          color: cardColor ?? Colors.black,
+          color: (isFound == null)
+              ? AppColors.text
+              : isFound!
+                  ? Colors.yellow.shade600
+                  : AppColors.contrast,
           boxShadow: AppShadows.mainShadow),
       child: Icon(
         icon ?? Icons.question_mark_outlined,
-        color: iconColor ?? Colors.white,
+        color: (isFound == null)
+            ? AppColors.contrast
+            : isFound!
+                ? AppColors.contrast
+                : AppColors.text,
         size: 40,
       ),
     );

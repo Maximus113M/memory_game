@@ -17,6 +17,9 @@ import 'package:go_router/go_router.dart';
 class GameProvider with ChangeNotifier {
   final ScoreDbRegisterUseCase? scoreDbRegisterUseCase;
   final ScoreLocalRegisterUseCase? scoreLocalRegisterUseCase;
+  final Color originalCardBackColor = AppColors.contrast;
+  final Color originalCardBackIconColor = AppColors.text;
+
   GameDifficulty currentGameMode = GameDifficulty.easy;
   bool isMemorizing = false;
   int countdownLimit = 5;
@@ -34,11 +37,9 @@ class GameProvider with ChangeNotifier {
   bool isGameEnd = false;
   bool isCloudEnable = false;
   bool isFound = false;
-  Color? cardBackColor;
-  Color? cardBackIconColor;
   double gridViewAspectRatio = 1;
   String nameRecord = 'New Game Score';
-  bool isSoundReady = false;
+  bool showingCards = false;
 
   GameProvider({
     required this.scoreDbRegisterUseCase,
@@ -85,16 +86,6 @@ class GameProvider with ChangeNotifier {
     completedCardList.shuffle();
   }
 
-  void setColors() {
-    if (currentCard!.isFound) {
-      cardBackColor = Colors.yellow.shade600;
-      cardBackIconColor = Colors.white;
-      return;
-    }
-    cardBackColor = Colors.white;
-    cardBackIconColor = Colors.black;
-  }
-
   void setNameRecord(String name) {
     nameRecord = name;
   }
@@ -106,26 +97,32 @@ class GameProvider with ChangeNotifier {
     secondCard = null;
   }
 
-  void flipCard(BuildContext context, int index) {
+  void toggleCurrentCard(int index) {
     if (isValidating || !isTimerOn) {
       return;
     }
-
-    isFound = false;
     currentCard = completedCardList[index];
-
     if (currentCard!.isSelected || currentCard!.isFound) {
       return;
     }
+    isFound = false;
     if (firstCard != null) {
+      currentCard!.select();
+      currentCard!.cardKey.currentState!.toggleCard();
       secondCard = currentCard;
-      currentCard!.select();
-      validateMatching(context);
+      //secondCard!.select();
     } else {
-      firstCard = currentCard;
       currentCard!.select();
+      currentCard!.cardKey.currentState!.toggleCard();
+      firstCard = currentCard;
+      //firstCard!.select();
     }
-    notifyListeners();
+  }
+
+  void flipCardDone(BuildContext context) async {
+    if (firstCard != null && secondCard != null) {
+      validateMatching(context);
+    }
   }
 
   void validateMatching(BuildContext context) async {
@@ -138,10 +135,13 @@ class GameProvider with ChangeNotifier {
       isFound = true;
       foundCardsCounter += 2;
       isWonGame(context);
+      notifyListeners();
 
-      await Future.delayed(const Duration(milliseconds: 250));
+      await Future.delayed(const Duration(milliseconds: 200));
     } else {
-      await Future.delayed(const Duration(milliseconds: 600));
+      await Future.delayed(const Duration(milliseconds: 150));
+      firstCard!.cardKey.currentState!.toggleCard();
+      secondCard!.cardKey.currentState!.toggleCard();
     }
     resetCardsValue();
     isValidating = false;
@@ -161,13 +161,16 @@ class GameProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void resetGameValues() {
+  void resetGameValues() async {
     completedCardList
         .where((card) => card.isFound || card.isSelected)
         .forEach((foundCard) {
+      foundCard.cardKey.currentState!.toggleCardWithoutAnimation();
+
       foundCard.forget();
       foundCard.deselect();
     });
+
     resetCardsValue();
     if (isMemorizing) {
       countDownSubscription!.cancel();
@@ -178,6 +181,8 @@ class GameProvider with ChangeNotifier {
     duration = const Duration(seconds: 0);
     isGameEnd = false;
     nameRecord = 'New Game Score';
+    showingCards = false;
+    currentCard = null;
     completedCardList.clear();
     completeCardList();
   }

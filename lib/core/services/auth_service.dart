@@ -21,14 +21,9 @@ class AuthService {
     );
   }
 
-  void isUserAuth() {
-    firebaseAuth.authStateChanges().listen((User? user) {
-      if (user == null) {
-        print('User is currently signed out!');
-      } else {
-        print('User is signed in!');
-      }
-    });
-    firebaseAuth.currentUser; //TODO: PENDIENTE CURRENT-USER
+  static void logOut() {
+    AuthService.currentUser = null;
+    AuthService.userData = null;
+    AuthService.userSettings = null;
   }
 }

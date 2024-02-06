@@ -1,8 +1,10 @@
+import 'package:flip_card/flip_card.dart';
 import 'package:flutter/material.dart';
 
 class CardEntity {
   final int value;
   final IconData icon;
+  final GlobalKey<FlipCardState> cardKey = GlobalKey<FlipCardState>();
   int? id;
   bool isFound = false;
   bool isSelected = false;

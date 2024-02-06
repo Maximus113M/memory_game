@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/material.dart';
 import 'package:memory_game/core/utils/utils.dart';
 
 import 'package:audioplayers/audioplayers.dart';
@@ -55,7 +56,7 @@ class AudioService {
     if (_musicPlayer != null && musicStreamSubscription == null) {
       musicStreamSubscription = _musicPlayer!.onPlayerStateChanged.listen(
         (event) {
-          print(event);
+          debugPrint("$event");
           if (event == PlayerState.completed) {
             if (_currentSongIndex < 2) {
               _currentSongIndex = getRandomSong();
@@ -120,9 +121,11 @@ class AudioService {
     _foundSound?.dispose().then((_) => _foundSound = null);
     _notMatchSound?.dispose().then((_) => _notMatchSound = null);
     _winGameSound?.dispose().then((_) => _winGameSound = null);
-    musicStreamSubscription!
-        .cancel()
-        .then((value) => musicStreamSubscription = null);
+    if (musicStreamSubscription != null) {
+      musicStreamSubscription!
+          .cancel()
+          .then((value) => musicStreamSubscription = null);
+    }
   }
 
   void setInGameMusic() {
