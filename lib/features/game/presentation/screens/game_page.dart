@@ -64,8 +64,14 @@ class GamePage extends StatelessWidget {
           )
         ],
       ),
-      body: GamePageBody(
-        gameProvider: Provider.of<GameProvider>(context),
+      body: WillPopScope(
+        onWillPop: () async {
+          gameProvider.quitGame();
+          return true;
+        },
+        child: GamePageBody(
+          gameProvider: Provider.of<GameProvider>(context),
+        ),
       ),
     );
   }

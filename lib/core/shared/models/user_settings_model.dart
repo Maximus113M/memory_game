@@ -11,6 +11,7 @@ class UserSettingsModel {
   bool isCloudEnabled;
   bool isInGameMusicEnabled;
   bool isGameSoundsEnabled;
+  bool isCloudNotificationEnabled;
   @enumerated
   GameDifficulty gameMode;
 
@@ -21,6 +22,7 @@ class UserSettingsModel {
     this.isCloudEnabled = false,
     this.isInGameMusicEnabled = true,
     this.isGameSoundsEnabled = true,
+    this.isCloudNotificationEnabled = true,
   });
 
   void updateUserSettings(UserSettingsModel newUserSettings) {
@@ -29,5 +31,6 @@ class UserSettingsModel {
     isCloudEnabled = newUserSettings.isCloudEnabled;
     isInGameMusicEnabled = newUserSettings.isInGameMusicEnabled;
     isGameSoundsEnabled = newUserSettings.isGameSoundsEnabled;
+    isCloudNotificationEnabled = newUserSettings.isCloudNotificationEnabled;
   }
 }

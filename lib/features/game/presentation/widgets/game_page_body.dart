@@ -16,10 +16,6 @@ class GamePageBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (gameProvider.completedCardList.isEmpty) {
-      gameProvider.completeCardList();
-    }
-
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -118,7 +114,15 @@ class GamePageBody extends StatelessWidget {
                     gameProvider.quitGame();
                     return;
                   }
-                  gameProvider.startGame();
+                  if (!gameProvider.isCloudEnable &&
+                      gameProvider.isEnableCloudNotification &&
+                      !gameProvider.isGameEnd) {
+                    gameProvider.showCloudReminder(context);
+                    return;
+                  }
+                  if (gameProvider.isGameEnd) {
+                    gameProvider.startGame();
+                  }
                 },
                 text: gameProvider.isTimerOn ? 'Quit' : 'Start',
                 icon: gameProvider.isTimerOn ? Icons.block : Icons.bolt,
@@ -136,11 +140,11 @@ class GamePageBody extends StatelessWidget {
                 icon: Icons.wifi_protected_setup_sharp,
               ),
               //TODO PRUEBAS
-              /*CustomFilledButtonIcon(
+              /* CustomFilledButtonIcon(
                 onPress: () {
                   const currentGameMode = GameDifficulty.easy;
                   const attempts = 6;
-                  const time = Duration(seconds: 59);
+                  const time = Duration(seconds: 10);
                   final timeBonusScore = AppFunctions.getTimeBonus(
                       difficulty: currentGameMode, duration: time);
                   final attemptsBonusScore = AppFunctions.getAttemptsBonus(
@@ -161,9 +165,8 @@ class GamePageBody extends StatelessWidget {
                     attemptsBonus: attemptsBonusScore,
                     timeBonus: timeBonusScore,
                   );
-                  gameProvider.showEndGameDialog(context, newGameStatistics);
-                  //gameProvider.scoreDbRegister(context, newGameStatistics);
-                  //gameProvider.scoreLocalRegister(context, newGameStatistics);
+                  //gameProvider.showEndGameDialog(context, newGameStatistics);
+                  gameProvider.scoreRegister(context, newGameStatistics);
                 },
                 text: '',
                 icon: Icons.restart_alt_outlined,

@@ -10,6 +10,15 @@ class AudioService {
     AppAssets.gameMusic1,
     AppAssets.gameMusic2,
     AppAssets.gameMusic3,
+    AppAssets.gameMusic4,
+    AppAssets.gameMusic5,
+    AppAssets.gameMusic6,
+    AppAssets.gameMusic7,
+    AppAssets.gameMusic8,
+    AppAssets.gameMusic9,
+    AppAssets.gameMusic10,
+    AppAssets.gameMusic11,
+    AppAssets.gameMusic12,
   ];
   int _currentSongIndex = 0;
   AudioPlayer? _musicPlayer;
@@ -58,11 +67,7 @@ class AudioService {
         (event) {
           debugPrint("$event");
           if (event == PlayerState.completed) {
-            if (_currentSongIndex < 2) {
-              _currentSongIndex = getRandomSong();
-            } else {
-              _currentSongIndex = 0;
-            }
+            getRandomSong();
             playGameMusic();
           }
         },
@@ -70,12 +75,13 @@ class AudioService {
     }
   }
 
-  int getRandomSong() {
+  void getRandomSong() {
     int randomIndex = AppFunctions.getRandomNumber(playList.length - 1);
-    if (randomIndex == _currentSongIndex) {
+    if (randomIndex != _currentSongIndex) {
+      _currentSongIndex = randomIndex;
+    } else {
       getRandomSong();
     }
-    return randomIndex;
   }
 
   void playGameMusic() async {
@@ -84,7 +90,7 @@ class AudioService {
     _musicPlayer?.play(
       AssetSource(playList[_currentSongIndex]),
       mode: PlayerMode.mediaPlayer,
-      volume: 0.4,
+      volume: 0.5,
     );
   }
 
@@ -102,6 +108,7 @@ class AudioService {
 
   void playNotMatchSound() async {
     if (!_enabledGameSounds) return;
+    _notMatchSound!.setReleaseMode(ReleaseMode.stop);
     await _notMatchSound?.play(
       AssetSource(AppAssets.notMatchCards),
       mode: PlayerMode.mediaPlayer,

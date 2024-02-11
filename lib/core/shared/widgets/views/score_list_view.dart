@@ -47,7 +47,7 @@ class ScoreListView extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
             itemCount: scoreList.length,
             itemBuilder: (context, index) => Flash(
-              duration: const Duration(milliseconds: 2200),
+              duration: const Duration(milliseconds: 1000),
               animate:
                   scoreList[index].userId == AuthService.currentUser!.uid &&
                       !context.read<HomeProvider>().isLocalList,

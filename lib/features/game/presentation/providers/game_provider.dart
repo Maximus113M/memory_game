@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:memory_game/core/shared/widgets/dialogs/custom_cloud_dialog.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/services/audio_service.dart';
@@ -17,9 +18,6 @@ import 'package:go_router/go_router.dart';
 class GameProvider with ChangeNotifier {
   final ScoreDbRegisterUseCase? scoreDbRegisterUseCase;
   final ScoreLocalRegisterUseCase? scoreLocalRegisterUseCase;
-  final Color originalCardBackColor = AppColors.contrast;
-  final Color originalCardBackIconColor = AppColors.text;
-
   GameDifficulty currentGameMode = GameDifficulty.easy;
   bool isMemorizing = false;
   int countdownLimit = 5;
@@ -40,6 +38,8 @@ class GameProvider with ChangeNotifier {
   double gridViewAspectRatio = 1;
   String nameRecord = 'New Game Score';
   bool showingCards = false;
+  bool isFlipDone = true;
+  bool isEnableCloudNotification = true;
 
   GameProvider({
     required this.scoreDbRegisterUseCase,
@@ -50,6 +50,13 @@ class GameProvider with ChangeNotifier {
     currentGameMode = userSettings.gameMode;
     countdownLimit = userSettings.memorizingTime;
     isCloudEnable = userSettings.isCloudEnabled;
+    isEnableCloudNotification = userSettings.isCloudNotificationEnabled;
+  }
+
+  initGameScreen() {
+    if (completedCardList.isEmpty) {
+      completeCardList();
+    }
   }
 
   void getGameMode(GameDifficulty gameDifficulty) {
@@ -61,8 +68,8 @@ class GameProvider with ChangeNotifier {
     countdownLimit = time;
   }
 
-  void cloudEnable(bool value) {
-    isCloudEnable = value;
+  void getCloudState(bool state) {
+    isCloudEnable = state;
   }
 
   void completeCardList() {
@@ -98,28 +105,28 @@ class GameProvider with ChangeNotifier {
   }
 
   void toggleCurrentCard(int index) {
-    if (isValidating || !isTimerOn) {
+    if (isValidating || !isTimerOn || !isFlipDone) {
       return;
     }
     currentCard = completedCardList[index];
     if (currentCard!.isSelected || currentCard!.isFound) {
       return;
     }
+    isFlipDone = false;
     isFound = false;
     if (firstCard != null) {
       currentCard!.select();
       currentCard!.cardKey.currentState!.toggleCard();
       secondCard = currentCard;
-      //secondCard!.select();
     } else {
       currentCard!.select();
       currentCard!.cardKey.currentState!.toggleCard();
       firstCard = currentCard;
-      //firstCard!.select();
     }
   }
 
   void flipCardDone(BuildContext context) async {
+    isFlipDone = true;
     if (firstCard != null && secondCard != null) {
       validateMatching(context);
     }
@@ -139,6 +146,7 @@ class GameProvider with ChangeNotifier {
 
       await Future.delayed(const Duration(milliseconds: 200));
     } else {
+      //AudioService().playNotMatchSound();
       await Future.delayed(const Duration(milliseconds: 150));
       firstCard!.cardKey.currentState!.toggleCard();
       secondCard!.cardKey.currentState!.toggleCard();
@@ -183,6 +191,7 @@ class GameProvider with ChangeNotifier {
     nameRecord = 'New Game Score';
     showingCards = false;
     currentCard = null;
+    isFlipDone = true;
     completedCardList.clear();
     completeCardList();
   }
@@ -210,14 +219,46 @@ class GameProvider with ChangeNotifier {
   }
 
   void scoreRegister(
-      BuildContext context, GameStatisticsModel newGameStatistics) {
-    if (newGameStatistics.score > 0) {
-      if (isCloudEnable) scoreDbRegister(context, newGameStatistics);
-      if (nameRecord != 'New Game Score') {
-        newGameStatistics.recordName = nameRecord;
-      }
-      scoreLocalRegister(context, newGameStatistics);
+      BuildContext context, GameStatisticsModel newGameStatistics) async {
+    bool dbRegister = false;
+    bool localRegister = false;
+
+    if (nameRecord != 'New Game Score') {
+      newGameStatistics.recordName = nameRecord;
     }
+    if (newGameStatistics.score > 0) {
+      await scoreLocalRegister(context, newGameStatistics).then(
+        (value) async {
+          localRegister = value;
+
+          if (isCloudEnable) {
+            await scoreDbRegister(context, newGameStatistics).then((value) {
+              dbRegister = value;
+              if (dbRegister || localRegister) {
+                context.pop();
+                saveGameNotification(context);
+              }
+            });
+          } else {
+            if (localRegister) {
+              context.pop();
+              saveGameNotification(context);
+            }
+          }
+        },
+      );
+    }
+  }
+
+  void saveGameNotification(BuildContext context) {
+    InAppNotification.showAppNotification(
+      context: context,
+      title: 'Score successfully registered',
+      message:
+          'Your score has been recorded, check it in the scores section in main menu.',
+      type: NotificationType.success,
+      duration: 4,
+    );
   }
 
   void showEndGameDialog(
@@ -234,7 +275,6 @@ class GameProvider with ChangeNotifier {
                 builder: (context) => SaveGameScoreDialog(
                   saveGameScore: () {
                     scoreRegister(context, gameStatisticsModel);
-                    context.pop();
                   },
                   setNameRecord: (value) => setNameRecord(value),
                   hideText: nameRecord,
@@ -293,25 +333,45 @@ class GameProvider with ChangeNotifier {
       attemptsCounter: attemptsCounter,
       time: duration,
     );
-
-    return baseScore + timeBonus + attemptsBonus;
+    int result = baseScore + timeBonus + attemptsBonus;
+    return result < 0 ? 0 : result;
   }
 
-  void scoreDbRegister(
+  Future<bool> scoreDbRegister(
       BuildContext context, GameStatisticsModel gameStatistics) async {
     final result = await scoreDbRegisterUseCase!(gameStatistics);
-
+    bool response = false;
     result.fold((l) {
       InAppNotification.serverFailure(context: context, message: l.message);
-    }, (r) => print(r));
+    }, (r) {
+      response = r;
+    });
+    return response;
   }
 
-  void scoreLocalRegister(
+  Future<bool> scoreLocalRegister(
       BuildContext context, GameStatisticsModel gameStatistics) async {
     final result = await scoreLocalRegisterUseCase!(gameStatistics);
-
+    bool response = false;
     result.fold((l) {
       InAppNotification.serverFailure(context: context, message: l.message);
-    }, (r) => print(r));
+    }, (r) {
+      response = r;
+    });
+    return response;
+  }
+
+  void showCloudReminder(BuildContext context) {
+    showDialog(
+      barrierColor: AppColors.text.withOpacity(0.9),
+      context: context,
+      builder: (context) => CustomCloudDialog(
+        disableNotification: () {},
+        okOption: () {
+          startGame();
+          context.pop();
+        },
+      ),
+    );
   }
 }

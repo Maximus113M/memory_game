@@ -7,6 +7,7 @@ class CustomFilledButton extends StatelessWidget {
   final Color? buttonColor;
   final double? verticalPadding;
   final double? horizontalPadding;
+  final double? radius;
 
   const CustomFilledButton({
     super.key,
@@ -16,6 +17,7 @@ class CustomFilledButton extends StatelessWidget {
     this.buttonColor,
     this.verticalPadding,
     this.horizontalPadding,
+    this.radius,
   });
 
   @override
@@ -24,16 +26,18 @@ class CustomFilledButton extends StatelessWidget {
       onPressed: onPress,
       style: ButtonStyle(
         backgroundColor: MaterialStatePropertyAll(buttonColor ?? Colors.black),
-        shape: const MaterialStatePropertyAll(
+        shape: MaterialStatePropertyAll(
           ContinuousRectangleBorder(
             borderRadius: BorderRadius.all(
-              Radius.circular(18),
+              Radius.circular(radius ?? 18),
             ),
           ),
         ),
-        padding: MaterialStatePropertyAll(EdgeInsets.symmetric(
-            vertical: verticalPadding ?? 10,
-            horizontal: horizontalPadding ?? 24)),
+        padding: MaterialStatePropertyAll(
+          EdgeInsets.symmetric(
+              vertical: verticalPadding ?? 10,
+              horizontal: horizontalPadding ?? 24),
+        ),
       ),
       child: Text(
         text,

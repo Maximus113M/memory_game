@@ -68,12 +68,19 @@ class HomeProvider extends ChangeNotifier with WidgetsBindingObserver {
     isPlayingMusic = true;
   }
 
+  onGameScreenSelected(BuildContext context) {
+    context.read<GameProvider>().initGameScreen();
+  }
+
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     _notification = state;
+    print(state);
     if (_notification == AppLifecycleState.resumed) {
       AudioService().playGameMusic();
-    } else {
+    }
+    if (_notification == AppLifecycleState.paused ||
+        _notification == AppLifecycleState.hidden) {
       AudioService().pauseMusic();
     }
   }

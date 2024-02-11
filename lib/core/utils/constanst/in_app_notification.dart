@@ -43,7 +43,8 @@ class InAppNotification {
       required String title,
       required String message,
       required NotificationType type,
-      isDismissible = true}) {
+      int duration = 5,
+      bool isDismissible = true}) {
     late Color notificationColor;
     late IconData notificationIcon;
 
@@ -77,7 +78,7 @@ class InAppNotification {
       boxShadows: AppShadows.mainShadow,
       backgroundColor: Colors.black87,
       isDismissible: isDismissible,
-      duration: const Duration(seconds: 5),
+      duration: Duration(seconds: duration),
       icon: Icon(
         notificationIcon,
         color: notificationColor,
@@ -98,6 +99,49 @@ class InAppNotification {
       ),
     ).show(context);
   }
+
+  /*static void settingDialog(
+      {required BuildContext context,
+      required String title,
+      required String message,
+      required Function() mainButton,
+      Color color = AppColors.warning}) {
+    Flushbar(
+      flushbarPosition: FlushbarPosition.TOP,
+      flushbarStyle: FlushbarStyle.FLOATING,
+      reverseAnimationCurve: Curves.decelerate,
+      forwardAnimationCurve: Curves.elasticOut,
+      leftBarIndicatorColor: AppColors.warning,
+      borderRadius: const BorderRadius.all(
+        Radius.circular(10),
+      ),
+      boxShadows: AppShadows.mainShadow,
+      backgroundColor: Colors.black87,
+      isDismissible: false,
+      icon: Icon(
+        Icons.warning_outlined,
+        color: color,
+        size: 30,
+      ),
+      padding: const EdgeInsets.all(20),
+      titleText: Text(
+        title,
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20.0,
+          color: color,
+        ),
+      ),
+      messageText: Text(
+        message,
+        style: FontStyles.body0(AppColors.contrast),
+      ),
+      mainButton: CustomFilledButton(
+        text: 'Don\'t\nshow again',
+        onPress: () => mainButton(),
+      ),
+    ).show(context);
+  }*/
 }
 
 enum NotificationType {

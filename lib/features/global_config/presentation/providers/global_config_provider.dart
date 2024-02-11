@@ -75,7 +75,7 @@ class GlobalConfigProvider with ChangeNotifier {
 
   setCloudUpload(BuildContext context, bool value) {
     isCloudEnable = value;
-    Provider.of<GameProvider>(context, listen: false).cloudEnable(value);
+    Provider.of<GameProvider>(context, listen: false).getCloudState(value);
     notifyListeners();
   }
 

@@ -30,6 +30,10 @@ class HomePageBody extends StatelessWidget {
           onTap: () {
             context.read<HomeProvider>().isLocalList =
                 homeProvider.menuList[index].isLocalList;
+
+            if (homeProvider.menuList[index].path == '/game') {
+              homeProvider.onGameScreenSelected(context);
+            }
             GoRouter.of(context).push(homeProvider.menuList[index].path);
           },
           child: MenuOption(

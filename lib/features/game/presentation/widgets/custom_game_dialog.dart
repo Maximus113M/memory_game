@@ -49,21 +49,26 @@ class CustomGameDialog extends StatelessWidget {
                       style: FontStyles.body0(AppColors.text),
                     ),
                     const SizedBox(height: 3),
-                    Text(
-                      'Time Bonus: +${gameStatisticsModel.timeBonus}',
-                      style: FontStyles.body0(AppColors.text),
+                    scoreDescriptionRow(
+                      'Time Bonus: ',
+                      gameStatisticsModel.timeBonus!,
                     ),
                     const SizedBox(height: 3),
-                    Text(
-                      'Attempts Bonus: +${gameStatisticsModel.attemptsBonus}',
-                      style: FontStyles.body0(AppColors.text),
+                    scoreDescriptionRow(
+                      'Attempts Bonus: ',
+                      gameStatisticsModel.attemptsBonus!,
                     ),
                     const SizedBox(
                       height: 5,
                     ),
                     Text(
-                      'Score: ${gameStatisticsModel.score}',
-                      style: FontStyles.subtitle1(AppColors.successText),
+                      'Score: ${gameStatisticsModel.score} / 5000',
+                      style:
+                          FontStyles.subtitle1(gameStatisticsModel.score < 1000
+                              ? AppColors.error
+                              : gameStatisticsModel.score < 2100
+                                  ? AppColors.warning
+                                  : AppColors.successText),
                     ),
                   ],
                 ),
@@ -100,6 +105,22 @@ class CustomGameDialog extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Row scoreDescriptionRow(String title, int value) {
+    return Row(
+      children: [
+        Text(
+          title,
+          style: FontStyles.bodyBold0(AppColors.text),
+        ),
+        Text(
+          '+$value',
+          style: FontStyles.bodyBold0(
+              value == 0 ? AppColors.warning : AppColors.successText),
+        ),
+      ],
     );
   }
 }
