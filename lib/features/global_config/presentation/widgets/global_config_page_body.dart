@@ -112,7 +112,7 @@ class GlobalConfigPageBody extends StatelessWidget {
                     ),
                     trailing: Checkbox(
                       activeColor: Colors.amber.shade700,
-                      value: globalConfigProvider.enabledInGameMusic,
+                      value: globalConfigProvider.isInGameMusicEnabled,
                       onChanged: (value) =>
                           globalConfigProvider.setInGameMusic(context, value!),
                     ),
@@ -127,7 +127,7 @@ class GlobalConfigPageBody extends StatelessWidget {
                     ),
                     trailing: Checkbox(
                       activeColor: Colors.amber.shade700,
-                      value: globalConfigProvider.enabledGameSounds,
+                      value: globalConfigProvider.isGameSoundsEnabled,
                       onChanged: (value) =>
                           globalConfigProvider.setGameSounds(value!),
                     ),

@@ -34,8 +34,9 @@ class GlobalConfigProvider with ChangeNotifier {
   GameDifficulty currentGameMode = GameDifficulty.easy;
   int memorizingTime = 5;
   bool isCloudEnable = false;
-  bool enabledInGameMusic = true;
-  bool enabledGameSounds = true;
+  bool isInGameMusicEnabled = true;
+  bool isGameSoundsEnabled = true;
+  bool isCloudNotificationEnabled = true;
   bool isValidating = false;
   String inputValue = '';
 
@@ -53,8 +54,9 @@ class GlobalConfigProvider with ChangeNotifier {
     currentGameMode = userSettings.gameMode;
     memorizingTime = userSettings.memorizingTime;
     isCloudEnable = userSettings.isCloudEnabled;
-    enabledInGameMusic = userSettings.isInGameMusicEnabled;
-    enabledGameSounds = userSettings.isGameSoundsEnabled;
+    isInGameMusicEnabled = userSettings.isInGameMusicEnabled;
+    isGameSoundsEnabled = userSettings.isGameSoundsEnabled;
+    isCloudNotificationEnabled = userSettings.isCloudNotificationEnabled;
   }
 
   void selectGameMode(BuildContext context, GameDifficulty selectedtGameMode) {
@@ -84,14 +86,14 @@ class GlobalConfigProvider with ChangeNotifier {
   }
 
   void setInGameMusic(BuildContext context, bool option) {
-    enabledInGameMusic = !enabledInGameMusic;
+    isInGameMusicEnabled = !isInGameMusicEnabled;
     AudioService().setInGameMusic();
     notifyListeners();
   }
 
   void setGameSounds(bool option) {
     AudioService().setGameSounds();
-    enabledGameSounds = !enabledGameSounds;
+    isGameSoundsEnabled = !isGameSoundsEnabled;
     notifyListeners();
   }
 
@@ -351,16 +353,17 @@ class GlobalConfigProvider with ChangeNotifier {
   void updateUserSettings() async {
     final currentUser = AuthService.currentUser;
     if (currentUser != null) {
-      final UserSettingsModel userSettings = UserSettingsModel(
+      final UserSettingsModel newUserSettings = UserSettingsModel(
         userId: currentUser.uid,
         gameMode: currentGameMode,
         memorizingTime: memorizingTime,
         isCloudEnabled: isCloudEnable,
-        isGameSoundsEnabled: enabledGameSounds,
-        isInGameMusicEnabled: enabledInGameMusic,
+        isGameSoundsEnabled: isGameSoundsEnabled,
+        isInGameMusicEnabled: isInGameMusicEnabled,
+        isCloudNotificationEnabled: isCloudNotificationEnabled,
       );
-      if (!checkForChanges(userSettings)) return;
-      final result = await updateUserSettingsUseCase(userSettings);
+      if (!checkForChanges(newUserSettings)) return;
+      final result = await updateUserSettingsUseCase(newUserSettings);
       result.fold(
           (l) => /*InAppNotification.serverFailure(
               context: context, message: l.message)*/
@@ -387,7 +390,9 @@ class GlobalConfigProvider with ChangeNotifier {
         currenSettings.isInGameMusicEnabled ==
             newUserSettings.isInGameMusicEnabled &&
         currenSettings.isGameSoundsEnabled ==
-            newUserSettings.isGameSoundsEnabled) {
+            newUserSettings.isGameSoundsEnabled &&
+        currenSettings.isCloudNotificationEnabled ==
+            newUserSettings.isCloudNotificationEnabled) {
       return false;
     }
     return true;

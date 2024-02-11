@@ -43,8 +43,14 @@ class GlobalConfigPage extends StatelessWidget {
           ],
         ),
       ),
-      body: GlobalConfigPageBody(
-          globalConfigProvider: Provider.of<GlobalConfigProvider>(context)),
+      body: WillPopScope(
+        onWillPop: () async {
+          context.read<GlobalConfigProvider>().updateUserSettings();
+          return true;
+        },
+        child: GlobalConfigPageBody(
+            globalConfigProvider: Provider.of<GlobalConfigProvider>(context)),
+      ),
     );
   }
 }

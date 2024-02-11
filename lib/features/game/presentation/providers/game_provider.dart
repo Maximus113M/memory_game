@@ -14,6 +14,8 @@ import 'package:memory_game/features/game/domain/use_cases.dart/score_db_registe
 import 'package:memory_game/features/game/domain/use_cases.dart/score_local_register_use_case.dart';
 
 import 'package:go_router/go_router.dart';
+import 'package:memory_game/features/global_config/presentation/providers/global_config_provider.dart';
+import 'package:provider/provider.dart';
 
 class GameProvider with ChangeNotifier {
   final ScoreDbRegisterUseCase? scoreDbRegisterUseCase;
@@ -366,7 +368,16 @@ class GameProvider with ChangeNotifier {
       barrierColor: AppColors.text.withOpacity(0.9),
       context: context,
       builder: (context) => CustomCloudDialog(
-        disableNotification: () {},
+        disableNotification: () {
+          if (isEnableCloudNotification) {
+            context.read<GlobalConfigProvider>().isCloudNotificationEnabled =
+                false;
+            context.read<GlobalConfigProvider>().updateUserSettings();
+            isEnableCloudNotification = false;
+          }
+          startGame();
+          context.pop();
+        },
         okOption: () {
           startGame();
           context.pop();

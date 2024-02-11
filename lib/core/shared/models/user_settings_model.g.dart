@@ -28,23 +28,28 @@ const UserSettingsModelSchema = CollectionSchema(
       name: r'isCloudEnabled',
       type: IsarType.bool,
     ),
-    r'isGameSoundsEnabled': PropertySchema(
+    r'isCloudNotificationEnabled': PropertySchema(
       id: 2,
+      name: r'isCloudNotificationEnabled',
+      type: IsarType.bool,
+    ),
+    r'isGameSoundsEnabled': PropertySchema(
+      id: 3,
       name: r'isGameSoundsEnabled',
       type: IsarType.bool,
     ),
     r'isInGameMusicEnabled': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'isInGameMusicEnabled',
       type: IsarType.bool,
     ),
     r'memorizingTime': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'memorizingTime',
       type: IsarType.long,
     ),
     r'userId': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'userId',
       type: IsarType.string,
     )
@@ -81,10 +86,11 @@ void _userSettingsModelSerialize(
 ) {
   writer.writeByte(offsets[0], object.gameMode.index);
   writer.writeBool(offsets[1], object.isCloudEnabled);
-  writer.writeBool(offsets[2], object.isGameSoundsEnabled);
-  writer.writeBool(offsets[3], object.isInGameMusicEnabled);
-  writer.writeLong(offsets[4], object.memorizingTime);
-  writer.writeString(offsets[5], object.userId);
+  writer.writeBool(offsets[2], object.isCloudNotificationEnabled);
+  writer.writeBool(offsets[3], object.isGameSoundsEnabled);
+  writer.writeBool(offsets[4], object.isInGameMusicEnabled);
+  writer.writeLong(offsets[5], object.memorizingTime);
+  writer.writeString(offsets[6], object.userId);
 }
 
 UserSettingsModel _userSettingsModelDeserialize(
@@ -98,10 +104,11 @@ UserSettingsModel _userSettingsModelDeserialize(
             reader.readByteOrNull(offsets[0])] ??
         GameDifficulty.easy,
     isCloudEnabled: reader.readBoolOrNull(offsets[1]) ?? false,
-    isGameSoundsEnabled: reader.readBoolOrNull(offsets[2]) ?? true,
-    isInGameMusicEnabled: reader.readBoolOrNull(offsets[3]) ?? true,
-    memorizingTime: reader.readLongOrNull(offsets[4]) ?? 5,
-    userId: reader.readString(offsets[5]),
+    isCloudNotificationEnabled: reader.readBoolOrNull(offsets[2]) ?? true,
+    isGameSoundsEnabled: reader.readBoolOrNull(offsets[3]) ?? true,
+    isInGameMusicEnabled: reader.readBoolOrNull(offsets[4]) ?? true,
+    memorizingTime: reader.readLongOrNull(offsets[5]) ?? 5,
+    userId: reader.readString(offsets[6]),
   );
   object.id = id;
   return object;
@@ -125,8 +132,10 @@ P _userSettingsModelDeserializeProp<P>(
     case 3:
       return (reader.readBoolOrNull(offset) ?? true) as P;
     case 4:
-      return (reader.readLongOrNull(offset) ?? 5) as P;
+      return (reader.readBoolOrNull(offset) ?? true) as P;
     case 5:
+      return (reader.readLongOrNull(offset) ?? 5) as P;
+    case 6:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -375,6 +384,16 @@ extension UserSettingsModelQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isCloudEnabled',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<UserSettingsModel, UserSettingsModel, QAfterFilterCondition>
+      isCloudNotificationEnabledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isCloudNotificationEnabled',
         value: value,
       ));
     });
@@ -630,6 +649,20 @@ extension UserSettingsModelQuerySortBy
   }
 
   QueryBuilder<UserSettingsModel, UserSettingsModel, QAfterSortBy>
+      sortByIsCloudNotificationEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCloudNotificationEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserSettingsModel, UserSettingsModel, QAfterSortBy>
+      sortByIsCloudNotificationEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCloudNotificationEnabled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserSettingsModel, UserSettingsModel, QAfterSortBy>
       sortByIsGameSoundsEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isGameSoundsEnabled', Sort.asc);
@@ -730,6 +763,20 @@ extension UserSettingsModelQuerySortThenBy
   }
 
   QueryBuilder<UserSettingsModel, UserSettingsModel, QAfterSortBy>
+      thenByIsCloudNotificationEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCloudNotificationEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<UserSettingsModel, UserSettingsModel, QAfterSortBy>
+      thenByIsCloudNotificationEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isCloudNotificationEnabled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<UserSettingsModel, UserSettingsModel, QAfterSortBy>
       thenByIsGameSoundsEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isGameSoundsEnabled', Sort.asc);
@@ -803,6 +850,13 @@ extension UserSettingsModelQueryWhereDistinct
   }
 
   QueryBuilder<UserSettingsModel, UserSettingsModel, QDistinct>
+      distinctByIsCloudNotificationEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isCloudNotificationEnabled');
+    });
+  }
+
+  QueryBuilder<UserSettingsModel, UserSettingsModel, QDistinct>
       distinctByIsGameSoundsEnabled() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isGameSoundsEnabled');
@@ -850,6 +904,13 @@ extension UserSettingsModelQueryProperty
       isCloudEnabledProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isCloudEnabled');
+    });
+  }
+
+  QueryBuilder<UserSettingsModel, bool, QQueryOperations>
+      isCloudNotificationEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isCloudNotificationEnabled');
     });
   }
 

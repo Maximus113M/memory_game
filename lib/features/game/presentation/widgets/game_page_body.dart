@@ -120,9 +120,11 @@ class GamePageBody extends StatelessWidget {
                     gameProvider.showCloudReminder(context);
                     return;
                   }
-                  if (gameProvider.isGameEnd) {
-                    gameProvider.startGame();
-                  }
+                  /*context
+                      .read<GlobalConfigProvider>()
+                      .isCloudNotificationEnabled = true;
+                  gameProvider.isEnableCloudNotification = true;*/
+                  gameProvider.startGame();
                 },
                 text: gameProvider.isTimerOn ? 'Quit' : 'Start',
                 icon: gameProvider.isTimerOn ? Icons.block : Icons.bolt,
