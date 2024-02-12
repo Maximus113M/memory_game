@@ -140,27 +140,23 @@ class GameDataSourceImpl extends GameDataSource {
   Future<bool> gameScoreLocalRegister(
       GameStatisticsModel gameStatistics) async {
     try {
-      List<ScoresDataModel> scoreList = [];
       final Isar isarDb = await isarIntance;
-      final int lastIndex = isarDb.scoresDataModels.countSync();
-      ScoresDataModel? lastScoreItem;
+      List<ScoresDataModel> scoreList = [];
 
-      if (lastIndex > 0) {
-        lastScoreItem = await isarDb.scoresDataModels
+      ScoresDataModel? lastScoreItem = await isarDb.scoresDataModels
+          .filter()
+          .gameModeEqualTo(
+              AppFunctions.getDifficultyValue(gameStatistics.gameMode))
+          .sortByScore()
+          .findFirst();
+
+      if (lastScoreItem != null) {
+        scoreList = await isarDb.scoresDataModels
             .filter()
             .gameModeEqualTo(
                 AppFunctions.getDifficultyValue(gameStatistics.gameMode))
-            .sortByScoreDesc()
-            .findFirst();
-
-        if (lastScoreItem != null) {
-          scoreList = await isarDb.scoresDataModels
-              .filter()
-              .gameModeEqualTo(
-                  AppFunctions.getDifficultyValue(gameStatistics.gameMode))
-              .scoreLessThan(gameStatistics.score)
-              .findAll();
-        }
+            .scoreLessThan(gameStatistics.score)
+            .findAll();
       }
 
       ScoresDataModel newScoreGameData = ScoresDataModel(
@@ -183,7 +179,6 @@ class GameDataSourceImpl extends GameDataSource {
           scoreItem.ranking = scoreItem.ranking + 1;
         }
         scoreList.insert(0, newScoreGameData);
-        scoreList.removeWhere((element) => element.ranking > 20);
 
         return await uploadGameScoreToLocal(scoreList);
       } else {
@@ -193,7 +188,7 @@ class GameDataSourceImpl extends GameDataSource {
         } else {
           scoreList.add(newScoreGameData);
         }
-        if (newScoreGameData.ranking > 20) return false;
+        if (newScoreGameData.ranking > 30) return false;
 
         return await uploadGameScoreToLocal(scoreList);
       }
@@ -210,10 +205,33 @@ class GameDataSourceImpl extends GameDataSource {
     try {
       final Isar isarDb = await isarIntance;
 
-      isarDb.writeTxnSync(
-        () => isarDb.scoresDataModels.putAllSync(scoreDataList),
+      await isarDb.writeTxn(
+        () => isarDb.scoresDataModels.putAll(scoreDataList),
       );
 
+      int recordsCounter = isarDb.scoresDataModels
+          .filter()
+          .gameModeEqualTo(scoreDataList[0].gameMode)
+          .countSync();
+
+      if (recordsCounter > 30) {
+        ScoresDataModel? lastScore;
+        if (scoreDataList.length > 1) {
+          lastScore = scoreDataList.last;
+        } else {
+          lastScore = isarDb.scoresDataModels
+              .filter()
+              .gameModeEqualTo(scoreDataList[0].gameMode)
+              .sortByRankingDesc()
+              .limit(1)
+              .findFirstSync();
+        }
+
+        if (lastScore != null) {
+          isarDb.writeTxnSync(
+              () => isarDb.scoresDataModels.deleteSync(lastScore!.id!));
+        }
+      }
       return true;
     } catch (e) {
       throw LocalException(

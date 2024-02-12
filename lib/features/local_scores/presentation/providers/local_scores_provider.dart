@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:memory_game/core/helpers/use_case.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/shared/models/scores_data_model.dart';
@@ -29,18 +28,7 @@ class LocalScoresProvider with ChangeNotifier {
       (l) =>
           InAppNotification.serverFailure(context: context, message: l.message),
       (r) {
-        switch (gameMode) {
-          case 1:
-            currentScoreList = r;
-            break;
-          case 2:
-            currentScoreList = r;
-            break;
-          case 3:
-            currentScoreList = r;
-            break;
-          default:
-        }
+        currentScoreList = r;
 
         notifyListeners();
         GoRouter.of(context).push('/local-scores-view');
@@ -51,9 +39,9 @@ class LocalScoresProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  void clearLocalScores() async {
-    await clearLocalScoreUseCase!(NoParams());
-    currentScoreList = [];
+  void clearCurrentLocalScores() async {
+    await clearLocalScoreUseCase!(gameMode);
+    currentScoreList.clear();
     notifyListeners();
   }
 

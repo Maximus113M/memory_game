@@ -20,12 +20,13 @@ class GlobalScoresDataSourceImpl extends GlobalScoresDataSource {
       final QuerySnapshot queryGlobalScores = await db
           .collection(Server.globalScores)
           .where("game_mode", isEqualTo: gameMode)
+          .orderBy('score', descending: true)
           .get();
 
       for (var document in queryGlobalScores.docs) {
         globalScoresList.add(ScoresDataModel.fromJson(document));
       }
-      globalScoresList.sort((a, b) => a.score.compareTo(b.score));
+      globalScoresList.sort((a, b) => b.score.compareTo(a.score));
 
       return globalScoresList;
     } catch (e) {

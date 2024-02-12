@@ -11,7 +11,7 @@ import 'package:path_provider/path_provider.dart';
 abstract class LocalScoresDataSource {
   Future<List<ScoresDataModel>> getLocalScoreList(int gameMode);
 
-  Future<bool> clearLocalScores();
+  Future<bool> clearLocalScores(int gameMode);
 }
 
 class LocalScoresDataSourceImpl extends LocalScoresDataSource {
@@ -40,9 +40,12 @@ class LocalScoresDataSourceImpl extends LocalScoresDataSource {
           .filter()
           .gameModeEqualTo(gameMode)
           .userIdEqualTo(AuthService.userData!.id)
-          .sortByRanking()
+          .sortByScoreDesc()
           .findAll();
-
+      //TODO BORRAR
+      scoreList.forEach((element) {
+        print(element.ranking);
+      });
       return scoreList;
     } on IsarError catch (e) {
       print(e);
@@ -60,11 +63,14 @@ class LocalScoresDataSourceImpl extends LocalScoresDataSource {
   }
 
   @override
-  Future<bool> clearLocalScores() async {
+  Future<bool> clearLocalScores(int gameMode) async {
     try {
       final Isar isarDb = await isarIntance;
       await isarDb.writeTxn(
-        () => isarDb.scoresDataModels.clear(),
+        () => isarDb.scoresDataModels
+            .filter()
+            .gameModeEqualTo(gameMode)
+            .deleteAll(),
       );
       return true;
     } catch (e) {

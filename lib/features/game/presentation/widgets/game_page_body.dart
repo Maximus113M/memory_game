@@ -8,6 +8,8 @@ import 'package:memory_game/features/global_config/data/models/game_mode_menu_op
 
 import 'package:flip_card/flip_card.dart';
 import 'package:animate_do/animate_do.dart';
+//import 'package:memory_game/features/game/data/models/game_statistics_model.dart';
+//import 'package:memory_game/features/global_config/presentation/providers/global_config_provider.dart';
 
 class GamePageBody extends StatelessWidget {
   final GameProvider gameProvider;
@@ -120,7 +122,7 @@ class GamePageBody extends StatelessWidget {
                     gameProvider.showCloudReminder(context);
                     return;
                   }
-                  /*context
+                  /* context
                       .read<GlobalConfigProvider>()
                       .isCloudNotificationEnabled = true;
                   gameProvider.isEnableCloudNotification = true;*/
@@ -145,8 +147,8 @@ class GamePageBody extends StatelessWidget {
               /* CustomFilledButtonIcon(
                 onPress: () {
                   const currentGameMode = GameDifficulty.easy;
-                  const attempts = 6;
-                  const time = Duration(seconds: 10);
+                  const attempts = 20;
+                  const time = Duration(seconds: 35);
                   final timeBonusScore = AppFunctions.getTimeBonus(
                       difficulty: currentGameMode, duration: time);
                   final attemptsBonusScore = AppFunctions.getAttemptsBonus(
