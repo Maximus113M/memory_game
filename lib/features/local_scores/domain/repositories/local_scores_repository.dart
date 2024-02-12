@@ -6,6 +6,8 @@ import 'package:dartz/dartz.dart';
 abstract class LocalScoresRepository {
   Future<Either<LocalFailure, List<ScoresDataModel>>> getLocalScoreList(
       int gameMode);
+  Future<Either<LocalFailure, bool>> clearLocalScoresByGameMode(int gameMode);
 
-  Future<Either<LocalFailure, bool>> clearLocalScores(int gameMode);
+  Future<Either<LocalFailure, bool>> deleteLocalScore(
+      ScoresDataModel scoreRecord);
 }

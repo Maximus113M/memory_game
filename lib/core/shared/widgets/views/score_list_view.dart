@@ -11,11 +11,15 @@ import 'package:provider/provider.dart';
 class ScoreListView extends StatelessWidget {
   final List<ScoresDataModel> scoreList;
   final Color textColor;
+  final bool isSeleted;
+  final Function(int)? onLongPress;
 
   const ScoreListView({
     super.key,
     required this.scoreList,
     required this.textColor,
+    this.isSeleted = false,
+    this.onLongPress,
   });
 
   @override
@@ -51,79 +55,83 @@ class ScoreListView extends StatelessWidget {
               animate:
                   scoreList[index].userId == AuthService.currentUser!.uid &&
                       !context.read<HomeProvider>().isLocalList,
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 6),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                      color: scoreList[index].userId ==
-                                  AuthService.currentUser!.uid &&
-                              !context.read<HomeProvider>().isLocalList
-                          ? AppColors.winningScore
-                          : AppColors.disabled.withOpacity(.9),
-                      width: 3),
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(20),
+              child: GestureDetector(
+                onLongPress: () =>
+                    onLongPress != null ? onLongPress!(index) : null,
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                        color: scoreList[index].userId ==
+                                    AuthService.currentUser!.uid &&
+                                !context.read<HomeProvider>().isLocalList
+                            ? AppColors.winningScore
+                            : AppColors.disabled.withOpacity(.9),
+                        width: 3),
+                    borderRadius: const BorderRadius.all(
+                      Radius.circular(20),
+                    ),
+                    color: isSeleted ? Colors.amber : AppColors.contrast,
+                    boxShadow: AppShadows.mainShadow,
                   ),
-                  color: AppColors.contrast,
-                  boxShadow: AppShadows.mainShadow,
-                ),
-                child: Row(
-                  children: [
-                    rankBody(index),
-                    Padding(
-                      padding: const EdgeInsets.only(left: 15),
-                      child: SizedBox(
-                        width: ScreenSize.width * 0.55,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            scoreDataRow(
-                              scoreList[index].userName,
-                              context.read<HomeProvider>().isLocalList
-                                  ? Icons.description
-                                  : Icons.person_pin,
-                              textColor,
-                              ScreenSize.width * 0.43,
-                              isLocalList:
-                                  context.read<HomeProvider>().isLocalList,
-                            ),
-                            const SizedBox(height: 5),
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                scoreDataRow(
-                                  scoreList[index].time,
-                                  Icons.hourglass_bottom,
-                                  textColor,
-                                  ScreenSize.width * 0.2,
-                                ),
-                                SizedBox(
-                                  width: ScreenSize.height * 0.02,
-                                ),
-                                scoreDataRow(
-                                  "${scoreList[index].attempts} / ${context.read<GlobalScoresProvider>().minAttempts}",
-                                  Icons.move_up_sharp,
-                                  textColor,
-                                  ScreenSize.width * 0.2,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            scoreDataRow(
-                              "${scoreList[index].score}",
-                              Icons.emoji_events,
-                              Colors.amber,
-                              ScreenSize.width * 0.3,
-                            ),
-                          ],
+                  child: Row(
+                    children: [
+                      rankBody(index),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 15),
+                        child: SizedBox(
+                          width: ScreenSize.width * 0.55,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              scoreDataRow(
+                                scoreList[index].userName,
+                                context.read<HomeProvider>().isLocalList
+                                    ? Icons.description
+                                    : Icons.person_pin,
+                                textColor,
+                                ScreenSize.width * 0.43,
+                                isLocalList:
+                                    context.read<HomeProvider>().isLocalList,
+                              ),
+                              const SizedBox(height: 5),
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  scoreDataRow(
+                                    scoreList[index].time,
+                                    Icons.hourglass_bottom,
+                                    textColor,
+                                    ScreenSize.width * 0.2,
+                                  ),
+                                  SizedBox(
+                                    width: ScreenSize.height * 0.02,
+                                  ),
+                                  scoreDataRow(
+                                    "${scoreList[index].attempts} / ${context.read<GlobalScoresProvider>().minAttempts}",
+                                    Icons.move_up_sharp,
+                                    textColor,
+                                    ScreenSize.width * 0.2,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              scoreDataRow(
+                                "${scoreList[index].score}",
+                                Icons.emoji_events,
+                                Colors.amber,
+                                ScreenSize.width * 0.3,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -142,8 +150,9 @@ class ScoreListView extends StatelessWidget {
             ),
             Text(
               '${index + 1}',
-              style: FontStyles.heading3(
-                      scoreList[index].userId == AuthService.currentUser!.uid
+              style: FontStyles.heading3(isSeleted
+                      ? AppColors.contrast
+                      : scoreList[index].userId == AuthService.currentUser!.uid
                           ? AppColors.winningScore
                           : AppColors.text)
                   .copyWith(fontWeight: FontWeight.w900),
@@ -172,7 +181,7 @@ class ScoreListView extends StatelessWidget {
         Icon(
           icon,
           size: 28,
-          color: color,
+          color: isSeleted ? AppColors.contrast : color,
         ),
         const SizedBox(
           width: 5,
@@ -181,7 +190,7 @@ class ScoreListView extends StatelessWidget {
           constraints: BoxConstraints(maxWidth: width),
           child: Text(
             text,
-            style: FontStyles.bodyBold1(color),
+            style: FontStyles.bodyBold1(isSeleted ? AppColors.contrast : color),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             maxLines: 2,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/shared/widgets/buttons/custom_filled_buttons.dart';
@@ -8,6 +9,7 @@ class CustomConfirmationDialog extends StatelessWidget {
   final IconData? titleIcon;
   final String message;
   final Function() mainAction;
+  final Function()? secundaryAction;
 
   const CustomConfirmationDialog({
     super.key,
@@ -15,6 +17,7 @@ class CustomConfirmationDialog extends StatelessWidget {
     this.titleIcon,
     required this.message,
     required this.mainAction,
+    this.secundaryAction,
   });
 
   @override
@@ -41,34 +44,36 @@ class CustomConfirmationDialog extends StatelessWidget {
             ],
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: ScreenSize.width * 0.05),
+            padding: EdgeInsets.symmetric(horizontal: ScreenSize.width * 0.02),
             child: const Divider(
               thickness: 2,
             ),
           ),
         ],
       ),
-      content: Padding(
-        padding: EdgeInsets.symmetric(horizontal: ScreenSize.width * 0.07),
-        child: Text(
-          message,
-          style: FontStyles.body1(AppColors.lightText),
-        ),
+      contentPadding: EdgeInsets.symmetric(horizontal: ScreenSize.width * 0.1),
+      content: Text(
+        message,
+        style: FontStyles.body1(AppColors.lightText),
+        textAlign: TextAlign.center,
       ),
       actionsAlignment: MainAxisAlignment.center,
-      actionsPadding: EdgeInsets.symmetric(vertical: ScreenSize.height * 0.04),
+      actionsPadding: EdgeInsets.symmetric(vertical: ScreenSize.height * 0.03),
       actions: [
         CustomFilledButton(
           verticalPadding: 14,
-          horizontalPadding: 23,
-          text: 'Continue',
-          onPress: () => mainAction(),
+          horizontalPadding: 25,
+          text: 'Cancel',
+          onPress: () =>
+              secundaryAction != null ? secundaryAction!() : context.pop(),
+          textStyle: FontStyles.bodyBold0(AppColors.contrast),
         ),
         CustomFilledButton(
           verticalPadding: 14,
-          horizontalPadding: 30,
-          text: 'Cancel',
-          onPress: () => Navigator.pop(context),
+          horizontalPadding: 18,
+          text: 'Continue',
+          onPress: () => mainAction(),
+          textStyle: FontStyles.bodyBold0(AppColors.contrast),
         ),
       ],
     );

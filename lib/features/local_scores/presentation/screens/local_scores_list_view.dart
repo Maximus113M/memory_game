@@ -55,7 +55,7 @@ class LocalScoresListView extends StatelessWidget {
             child: IconButton(
               onPressed: () =>
                   Provider.of<LocalScoresProvider>(context, listen: false)
-                      .clearCurrentLocalScores(),
+                      .showDeleteScoresImersiveDialog(context),
               icon: const Icon(
                 Icons.auto_delete_outlined,
                 color: AppColors.contrast,
@@ -69,8 +69,12 @@ class LocalScoresListView extends StatelessWidget {
               localScoresProvider.isLoadingLocalScores)
           ? const MainLoading()
           : ScoreListView(
+              onLongPress: (p0) => context
+                  .read<LocalScoresProvider>()
+                  .showDeleteScoresDialog(context, p0),
               scoreList: context.watch<LocalScoresProvider>().currentScoreList,
               textColor: AppColors.text,
+              isSeleted: context.watch<LocalScoresProvider>().isSelected,
             ),
     );
   }

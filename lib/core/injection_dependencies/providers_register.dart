@@ -38,7 +38,8 @@ void registerProviders() {
   sl.registerLazySingleton(
     () => LocalScoresProvider(
       getLocalScoresUseCase: sl(),
-      clearLocalScoreUseCase: sl(),
+      clearLocalScoreByGameModeUseCase: sl(),
+      deleteLocalScoreUseCase: sl(),
     ),
   );
   sl.registerLazySingleton(

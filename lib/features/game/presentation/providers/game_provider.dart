@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:memory_game/core/shared/widgets/dialogs/custom_cloud_dialog.dart';
+import 'package:memory_game/core/shared/widgets/dialogs/imersive_dialog/content_bodies.dart';
+import 'package:memory_game/core/shared/widgets/dialogs/imersive_dialog/custom_imersive_dialog.dart';
 
 import 'package:memory_game/core/utils/utils.dart';
 import 'package:memory_game/core/services/audio_service.dart';
@@ -255,7 +256,7 @@ class GameProvider with ChangeNotifier {
   void saveGameNotification(BuildContext context) {
     InAppNotification.showAppNotification(
       context: context,
-      title: 'Score successfully registered',
+      title: 'Successfully registered',
       message:
           'Your score has been recorded, check it in the scores section in main menu.',
       type: NotificationType.success,
@@ -367,8 +368,13 @@ class GameProvider with ChangeNotifier {
     showDialog(
       barrierColor: AppColors.text.withOpacity(0.9),
       context: context,
-      builder: (context) => CustomCloudDialog(
-        disableNotification: () {
+      builder: (context) => CustomImersiveDialog(
+        disableOptionTitle: 'Don\'t Show Again',
+        contentBody: basicMessageBody(
+            'Remember that if you want to compete with other players, you must activate',
+            '"Upload scores to the cloud" in the game settings in the main Menu.',
+            Icons.cloud),
+        disableOption: () {
           if (isEnableCloudNotification) {
             context.read<GlobalConfigProvider>().isCloudNotificationEnabled =
                 false;

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 
 import 'package:memory_game/core/errors/exceptions.dart';
 import 'package:memory_game/core/services/auth_service.dart';
@@ -11,7 +12,9 @@ import 'package:path_provider/path_provider.dart';
 abstract class LocalScoresDataSource {
   Future<List<ScoresDataModel>> getLocalScoreList(int gameMode);
 
-  Future<bool> clearLocalScores(int gameMode);
+  Future<bool> clearLocalScoresByGameMode(int gameMode);
+
+  Future<bool> deleteLocalScore(ScoresDataModel selectedScore);
 }
 
 class LocalScoresDataSourceImpl extends LocalScoresDataSource {
@@ -42,19 +45,15 @@ class LocalScoresDataSourceImpl extends LocalScoresDataSource {
           .userIdEqualTo(AuthService.userData!.id)
           .sortByScoreDesc()
           .findAll();
-      //TODO BORRAR
-      scoreList.forEach((element) {
-        print(element.ranking);
-      });
+
       return scoreList;
     } on IsarError catch (e) {
-      print(e);
+      debugPrint('ISAR ERROR => $e');
       throw LocalException(
         message: 'A local data error has occurred',
         type: ExceptionType.localException,
       );
     } catch (e) {
-      print(e);
       throw LocalException(
         message: 'A local data error has occurred',
         type: ExceptionType.localException,
@@ -63,16 +62,44 @@ class LocalScoresDataSourceImpl extends LocalScoresDataSource {
   }
 
   @override
-  Future<bool> clearLocalScores(int gameMode) async {
+  Future<bool> clearLocalScoresByGameMode(int gameMode) async {
     try {
       final Isar isarDb = await isarIntance;
-      await isarDb.writeTxn(
-        () => isarDb.scoresDataModels
-            .filter()
-            .gameModeEqualTo(gameMode)
-            .deleteAll(),
-      );
-      return true;
+      if (AuthService.currentUser != null) {
+        await isarDb.writeTxn(
+          () => isarDb.scoresDataModels
+              .filter()
+              .gameModeEqualTo(gameMode)
+              .userIdEqualTo(AuthService.userData!.id)
+              .deleteAll(),
+        );
+        return true;
+      }
+      return false;
+    } catch (e) {
+      throw LocalException(
+          message: 'An error occurred while deleting the game scores',
+          type: ExceptionType.gameException);
+    }
+  }
+
+  @override
+  Future<bool> deleteLocalScore(ScoresDataModel selectedScore) async {
+    try {
+      final Isar isarDb = await isarIntance;
+      if (AuthService.currentUser != null) {
+        if (selectedScore.id != null) {
+          return await isarDb.writeTxn(
+              () => isarDb.scoresDataModels.delete(selectedScore.id!));
+        } else {
+          return await isarDb.writeTxn(() => isarDb.scoresDataModels
+              .filter()
+              .idIsNull()
+              .userNameEqualTo(selectedScore.userName)
+              .deleteFirst());
+        }
+      }
+      return false;
     } catch (e) {
       throw LocalException(
           message: 'An error occurred while deleting the game score',

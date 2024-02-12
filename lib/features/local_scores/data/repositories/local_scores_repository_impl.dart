@@ -26,10 +26,25 @@ class LocalScoresRepositoryImpl extends LocalScoresRepository {
   }
 
   @override
-  Future<Either<LocalFailure, bool>> clearLocalScores(int gameMode) async {
+  Future<Either<LocalFailure, bool>> clearLocalScoresByGameMode(
+      int gameMode) async {
     try {
       return Right(
-        await localScoresDataSource.clearLocalScores(gameMode),
+        await localScoresDataSource.clearLocalScoresByGameMode(gameMode),
+      );
+    } on LocalException catch (e) {
+      return Left(
+        LocalFailure(message: e.message, type: e.type),
+      );
+    }
+  }
+
+  @override
+  Future<Either<LocalFailure, bool>> deleteLocalScore(
+      ScoresDataModel scoreRecord) async {
+    try {
+      return Right(
+        await localScoresDataSource.deleteLocalScore(scoreRecord),
       );
     } on LocalException catch (e) {
       return Left(
