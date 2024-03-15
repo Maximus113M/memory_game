@@ -74,7 +74,10 @@ class GamePageBody extends StatelessWidget {
 
                   return GestureDetector(
                     onTap: () {
-                      gameProvider.toggleCurrentCard(index);
+                      if (gameProvider.completedCardList[index].cardKey
+                          .currentState!.isFront) {
+                        gameProvider.toggleCurrentCard(index);
+                      }
                     },
                     child: FlipCard(
                       key: gameProvider.completedCardList[index].cardKey,

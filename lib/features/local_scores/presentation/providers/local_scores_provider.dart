@@ -21,7 +21,7 @@ class LocalScoresProvider with ChangeNotifier {
   bool isLoadingLocalScores = false;
   int gameMode = 1;
   bool isCompleteCleaning = false;
-  bool isSelected = false;
+  int? selectedIndex;
 
   LocalScoresProvider({
     required this.getLocalScoresUseCase,
@@ -67,7 +67,7 @@ class LocalScoresProvider with ChangeNotifier {
     if (currentScoreList.isEmpty) return;
 
     showDialog(
-      barrierColor: AppColors.text.withOpacity(0.91),
+      barrierColor: AppColors.text.withOpacity(0.95),
       context: context,
       builder: (context) => CustomImersiveDialog(
         disableOptionTitle: 'Cancel',
@@ -111,7 +111,7 @@ class LocalScoresProvider with ChangeNotifier {
   }
 
   showDeleteScoresDialog(BuildContext context, int index) {
-    isSelected = true;
+    selectedIndex = index;
     notifyListeners();
     ScoresDataModel selectedScore = currentScoreList[index];
     showDialog(
@@ -120,11 +120,10 @@ class LocalScoresProvider with ChangeNotifier {
         context: context,
         builder: (context) => CustomConfirmationDialog(
               title: 'Hey ${AuthService.userData!.name}!',
-              message:
-                  'Remember that you will not be able to recover the selected score record, Do you want delete it?\n"${selectedScore.userName}"',
+              message: 'Do you want delete it?\n"${selectedScore.userName}"',
               mainAction: () => deleteLocalScore(context, index, selectedScore),
               secundaryAction: () {
-                isSelected = false;
+                selectedIndex = null;
                 context.pop();
                 notifyListeners();
               },
@@ -153,7 +152,7 @@ class LocalScoresProvider with ChangeNotifier {
         //TODO MAY TO GAME MODE WITHOUT SIGN IN
       }
     });
-    isSelected = false;
+    selectedIndex = null;
     notifyListeners();
   }
 

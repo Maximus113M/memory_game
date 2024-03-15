@@ -366,7 +366,7 @@ class GameProvider with ChangeNotifier {
 
   void showCloudReminder(BuildContext context) {
     showDialog(
-      barrierColor: AppColors.text.withOpacity(0.9),
+      barrierColor: AppColors.text.withOpacity(0.93),
       context: context,
       builder: (context) => CustomImersiveDialog(
         disableOptionTitle: 'Don\'t Show Again',

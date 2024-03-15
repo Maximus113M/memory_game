@@ -11,14 +11,14 @@ import 'package:provider/provider.dart';
 class ScoreListView extends StatelessWidget {
   final List<ScoresDataModel> scoreList;
   final Color textColor;
-  final bool isSeleted;
+  final int? seletedScoreIndex;
   final Function(int)? onLongPress;
 
   const ScoreListView({
     super.key,
     required this.scoreList,
     required this.textColor,
-    this.isSeleted = false,
+    this.seletedScoreIndex,
     this.onLongPress,
   });
 
@@ -73,7 +73,9 @@ class ScoreListView extends StatelessWidget {
                     borderRadius: const BorderRadius.all(
                       Radius.circular(20),
                     ),
-                    color: isSeleted ? Colors.amber : AppColors.contrast,
+                    color: seletedScoreIndex == index
+                        ? Colors.black
+                        : AppColors.contrast,
                     boxShadow: AppShadows.mainShadow,
                   ),
                   child: Row(
@@ -93,8 +95,7 @@ class ScoreListView extends StatelessWidget {
                                     : Icons.person_pin,
                                 textColor,
                                 ScreenSize.width * 0.43,
-                                isLocalList:
-                                    context.read<HomeProvider>().isLocalList,
+                                index,
                               ),
                               const SizedBox(height: 5),
                               Row(
@@ -105,6 +106,7 @@ class ScoreListView extends StatelessWidget {
                                     Icons.hourglass_bottom,
                                     textColor,
                                     ScreenSize.width * 0.2,
+                                    index,
                                   ),
                                   SizedBox(
                                     width: ScreenSize.height * 0.02,
@@ -114,6 +116,7 @@ class ScoreListView extends StatelessWidget {
                                     Icons.move_up_sharp,
                                     textColor,
                                     ScreenSize.width * 0.2,
+                                    index,
                                   ),
                                 ],
                               ),
@@ -125,6 +128,7 @@ class ScoreListView extends StatelessWidget {
                                 Icons.emoji_events,
                                 Colors.amber,
                                 ScreenSize.width * 0.3,
+                                index,
                               ),
                             ],
                           ),
@@ -150,7 +154,7 @@ class ScoreListView extends StatelessWidget {
             ),
             Text(
               '${index + 1}',
-              style: FontStyles.heading3(isSeleted
+              style: FontStyles.heading3(seletedScoreIndex == index
                       ? AppColors.contrast
                       : scoreList[index].userId == AuthService.currentUser!.uid
                           ? AppColors.winningScore
@@ -173,15 +177,15 @@ class ScoreListView extends StatelessWidget {
     );
   }
 
-  Row scoreDataRow(String text, IconData icon, Color color, double width,
-      {bool? isLocalList}) {
+  Row scoreDataRow(
+      String text, IconData icon, Color color, double width, int index) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           icon,
           size: 28,
-          color: isSeleted ? AppColors.contrast : color,
+          color: seletedScoreIndex == index ? AppColors.contrast : color,
         ),
         const SizedBox(
           width: 5,
@@ -190,7 +194,8 @@ class ScoreListView extends StatelessWidget {
           constraints: BoxConstraints(maxWidth: width),
           child: Text(
             text,
-            style: FontStyles.bodyBold1(isSeleted ? AppColors.contrast : color),
+            style: FontStyles.bodyBold1(
+                seletedScoreIndex == index ? AppColors.contrast : color),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             maxLines: 2,

@@ -65,16 +65,16 @@ class LocalScoresListView extends StatelessWidget {
           )
         ],
       ),
-      body: context.select((LocalScoresProvider localScoresProvider) =>
-              localScoresProvider.isLoadingLocalScores)
+      body: context.watch<LocalScoresProvider>().isLoadingLocalScores
           ? const MainLoading()
           : ScoreListView(
               onLongPress: (p0) => context
                   .read<LocalScoresProvider>()
                   .showDeleteScoresDialog(context, p0),
-              scoreList: context.watch<LocalScoresProvider>().currentScoreList,
+              scoreList: context.read<LocalScoresProvider>().currentScoreList,
               textColor: AppColors.text,
-              isSeleted: context.watch<LocalScoresProvider>().isSelected,
+              seletedScoreIndex:
+                  context.read<LocalScoresProvider>().selectedIndex,
             ),
     );
   }

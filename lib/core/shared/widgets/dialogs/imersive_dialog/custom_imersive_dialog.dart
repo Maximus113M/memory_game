@@ -38,15 +38,15 @@ class CustomImersiveDialog extends StatelessWidget {
         actions: [
           CustomFilledButton(
             text: disableOptionTitle,
-            textStyle: FontStyles.body0(AppColors.contrast),
+            textStyle: FontStyles.bodyBold0(AppColors.text),
             onPress: () => disableOption(),
-            buttonColor: Colors.white10,
+            buttonColor: Colors.white,
           ),
           CustomFilledButton(
             text: okOptionTitle ?? 'Ok',
-            textStyle: FontStyles.body0(AppColors.contrast),
+            textStyle: FontStyles.bodyBold0(AppColors.text),
             onPress: () => okOption(),
-            buttonColor: Colors.white10,
+            buttonColor: AppColors.contrast.withOpacity(0.75),
           ),
         ],
       ),

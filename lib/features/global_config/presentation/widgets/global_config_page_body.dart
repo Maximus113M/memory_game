@@ -78,7 +78,7 @@ class GlobalConfigPageBody extends StatelessWidget {
                   Row(
                     children: [
                       SizedBox(
-                        width: ScreenSize.width * 0.61,
+                        width: ScreenSize.width * 0.6,
                         child: description(
                           'Do you want that when you record the score of a game, you can upload it to the cloud and compete with players from all over the world?',
                         ),

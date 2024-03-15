@@ -87,15 +87,11 @@ class InAppNotification {
       padding: const EdgeInsets.all(20),
       titleText: Text(
         title,
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20.0,
-          color: notificationColor,
-        ),
+        style: FontStyles.bodyBold0(notificationColor).copyWith(fontSize: 18),
       ),
       messageText: Text(
         message,
-        style: FontStyles.body0(AppColors.contrast),
+        style: FontStyles.body2(AppColors.contrast),
       ),
     ).show(context);
   }
